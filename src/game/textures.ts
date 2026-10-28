@@ -1,77 +1,102 @@
 import { CanvasTexture, RepeatWrapping, SRGBColorSpace } from 'three'
 
-type Surface = 'floor' | 'ceiling' | 'brick' | 'wall' | 'wood' | 'carpet' | 'metal'
-
+type Surface = 'terrazzo' | 'plaster' | 'glass' | 'pavers' | 'floor' | 'ceiling' | 'brick' | 'wall' | 'wood' | 'carpet' | 'metal'
+type SignOptions = { bg?: string; fg?: string; width?: number; height?: number; small?: string; serif?: boolean; border?: boolean }
+const surfaceCache = new Map<string, CanvasTexture>()
+const signCache = new Map<string, CanvasTexture>()
 function seeded(seed: number) { return () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296 } }
 
-/** Texture repeats are specified per mesh, not for the old fixed-size room. */
+/** Small procedural, cached surfaces: no downloaded building imagery or oversized per-mesh canvases. */
 export function surfaceTexture(kind: Surface, repeat: [number, number] = [1, 1]) {
-  const c = document.createElement('canvas'); c.width = c.height = 512
-  const ctx = c.getContext('2d')!, rand = seeded(71)
-  ctx.fillStyle = { floor: '#c0bdac', ceiling: '#acb0a0', brick: '#91634e', wall: '#b6b8a4', wood: '#8a6848', carpet: '#6d7767', metal: '#778478' }[kind]
-  ctx.fillRect(0, 0, 512, 512)
-  for (let i = 0; i < 10000; i++) {
-    const v = rand() > .5 ? 230 : 20
-    ctx.fillStyle = `rgba(${v},${v},${v},${rand() * (kind === 'carpet' ? .16 : .055)})`
-    ctx.fillRect(rand() * 512, rand() * 512, 1 + rand() * 2, 1 + rand() * 2)
+  const key = `${kind}/${repeat[0]}/${repeat[1]}`
+  const existing = surfaceCache.get(key)
+  if (existing) return existing
+  const canvas = document.createElement('canvas')
+  canvas.width = canvas.height = kind === 'glass' ? 512 : 256
+  const ctx = canvas.getContext('2d')!, size = canvas.width
+  const rand = seeded(kind.split('').reduce((n, c) => n * 33 + c.charCodeAt(0), 71))
+  const backgrounds: Record<Surface, string> = {
+    terrazzo: '#e9e4d7', plaster: '#efeee5', glass: '#20313f', pavers: '#97968b',
+    floor: '#e9e4d7', ceiling: '#ecede6', brick: '#ae9d8c', wall: '#efeee5',
+    wood: '#b9a287', carpet: '#7c7473', metal: '#899396',
   }
-  if (kind === 'floor' || kind === 'ceiling') {
-    ctx.strokeStyle = kind === 'ceiling' ? '#747e6e' : '#9c9e8f'; ctx.lineWidth = kind === 'ceiling' ? 3 : 1.5
-    ctx.strokeRect(0, 0, 512, 512)
-    if (kind === 'ceiling') {
-      ctx.strokeRect(256, 0, 256, 512)
-      for (let i = 0; i < 1100; i++) {
-        ctx.fillStyle = 'rgba(35,45,34,.12)'; ctx.fillRect(rand() * 512, rand() * 512, 1.5, 1)
+  ctx.fillStyle = backgrounds[kind]; ctx.fillRect(0, 0, size, size)
+  if (kind === 'glass') {
+    const sky = ctx.createLinearGradient(0, 0, 0, size)
+    sky.addColorStop(0, '#344755'); sky.addColorStop(.57, '#526875'); sky.addColorStop(.7, '#8d8690'); sky.addColorStop(1, '#1e2c35')
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, size, size)
+    // Distant, fictional campus massing viewed through the atrium windows.
+    for (let x = -6; x < size; x += 11 + Math.floor(rand() * 30)) {
+      const h = 27 + rand() * 120
+      ctx.fillStyle = rand() > .43 ? '#263741' : '#344751'
+      ctx.fillRect(x, size - h, 18 + rand() * 38, h)
+      if (rand() > .5) {
+        ctx.fillStyle = '#c6a78b'
+        for (let y = size - h + 14; y < size - 12; y += 19) for (let dx = 7; dx < 23; dx += 9) if (rand() > .68) ctx.fillRect(x + dx, y, 2, 3)
       }
-    } else for (let i = 0; i < 20; i++) {
-      ctx.strokeStyle = 'rgba(40,46,35,.065)'; ctx.beginPath()
-      const x = rand() * 512, y = rand() * 512
-      ctx.moveTo(x, y); ctx.lineTo(x + rand() * 48, y + rand() * 13); ctx.stroke()
+    }
+    ctx.fillStyle = 'rgba(214,205,193,.14)'
+    for (let i = 0; i < 90; i++) ctx.fillRect(rand() * size, rand() * size * .68, 1, 1)
+  } else {
+    for (let i = 0; i < 1300; i++) {
+      const bright = rand() > .49
+      ctx.fillStyle = bright ? 'rgba(255,251,239,.20)' : 'rgba(61,61,55,.08)'
+      const x = rand() * size, y = rand() * size
+      ctx.fillRect(x, y, 1 + rand() * (kind === 'terrazzo' || kind === 'floor' ? 5 : 2), 1 + rand() * 3)
+    }
+    if (kind === 'terrazzo' || kind === 'floor' || kind === 'pavers') {
+      ctx.strokeStyle = 'rgba(106,104,95,.25)'; ctx.lineWidth = 1
+      ctx.strokeRect(.5, .5, size - 1, size - 1)
+      for (let i = 0; i < 2; i++) {
+        const p = (i + 1) * size / 3
+        ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, size); ctx.moveTo(0, p); ctx.lineTo(size, p); ctx.stroke()
+      }
+    }
+    if (kind === 'wood') for (let i = 0; i < 65; i++) {
+      ctx.strokeStyle = 'rgba(69,51,42,.12)'; ctx.lineWidth = 1
+      const y = rand() * size
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.bezierCurveTo(90, y - 3, 170, y + 4, size, y); ctx.stroke()
     }
   }
-  if (kind === 'brick') {
-    for (let row = 0; row < 8; row++) for (let col = -1; col < 4; col++) {
-      const x = col * 256 + (row % 2) * 128, y = row * 64
-      ctx.fillStyle = '#5e6255'; ctx.fillRect(x, y, 256, 4); ctx.fillRect(x, y, 4, 64)
-      ctx.fillStyle = `rgba(45,22,14,${.03 + rand() * .1})`; ctx.fillRect(x + 5, y + 5, 250, 58)
-    }
-  }
-  if (kind === 'wood') for (let i = 0; i < 130; i++) {
-    const y = rand() * 512
-    ctx.strokeStyle = `rgba(45,25,13,${.03 + rand() * .1})`; ctx.lineWidth = 1 + rand() * 2
-    ctx.beginPath(); ctx.moveTo(0, y); ctx.bezierCurveTo(140, y - 6, 350, y + 8, 512, y + 1); ctx.stroke()
-  }
-  if (kind === 'metal') for (let y = 0; y < 512; y += 3) {
-    ctx.fillStyle = `rgba(210,220,202,${rand() * .04})`; ctx.fillRect(0, y, 512, 1)
-  }
-  if (kind === 'carpet') for (let x = 0; x < 512; x += 8) {
-    ctx.fillStyle = 'rgba(28,46,32,.045)'; ctx.fillRect(x, 0, 2, 512)
-  }
-  const texture = new CanvasTexture(c); texture.colorSpace = SRGBColorSpace
-  texture.wrapS = texture.wrapT = RepeatWrapping; texture.repeat.set(...repeat); texture.anisotropy = 4
+  const texture = new CanvasTexture(canvas)
+  texture.colorSpace = SRGBColorSpace
+  texture.wrapS = texture.wrapT = RepeatWrapping
+  texture.repeat.set(...repeat)
+  texture.anisotropy = 2
+  surfaceCache.set(key, texture)
   return texture
 }
 
-export function signTexture(text: string, options: { bg?: string; fg?: string; width?: number; height?: number; small?: string; serif?: boolean; border?: boolean } = {}) {
-  const c = document.createElement('canvas'); c.width = options.width ?? 1024; c.height = options.height ?? 256
-  const ctx = c.getContext('2d')!
-  if (options.bg !== 'transparent') { ctx.fillStyle = options.bg ?? '#263b31'; ctx.fillRect(0, 0, c.width, c.height) }
+/** Keep the public signTexture(text, {small,bg,fg}) API used by primitives. */
+export function signTexture(text: string, options: SignOptions = {}) {
+  const key = `${text}\u0000${JSON.stringify(options)}`
+  const existing = signCache.get(key)
+  if (existing) return existing
+  const canvas = document.createElement('canvas')
+  canvas.width = options.width ?? 768
+  canvas.height = options.height ?? 192
+  const ctx = canvas.getContext('2d')!
+  if (options.bg !== 'transparent') { ctx.fillStyle = options.bg ?? '#9e2835'; ctx.fillRect(0, 0, canvas.width, canvas.height) }
   if (options.border !== false) {
-    ctx.strokeStyle = options.fg ?? '#c8cfb6'; ctx.lineWidth = 2; ctx.strokeRect(10, 10, c.width - 20, c.height - 20)
+    ctx.strokeStyle = options.fg ?? '#fff2df'; ctx.lineWidth = 2
+    ctx.strokeRect(9, 9, canvas.width - 18, canvas.height - 18)
   }
-  ctx.fillStyle = options.fg ?? '#e2dfc9'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
-  const lines = text.split('\n'), family = options.serif ? 'Georgia, serif' : 'monospace'
-  const lineHeight = c.height * (options.small ? .55 : .76) / lines.length
-  const fit = (line: string, max: number) => {
-    let size = max
-    ctx.font = `500 ${size}px ${family}`
-    while (ctx.measureText(line).width > c.width - 64 && size > 12) { size--; ctx.font = `500 ${size}px ${family}` }
+  ctx.fillStyle = options.fg ?? '#fff7e8'
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+  const lines = text.split('\n'), family = options.serif ? 'Georgia, serif' : 'Arial, sans-serif'
+  const lineHeight = canvas.height * (options.small ? .58 : .76) / lines.length
+  const fit = (line: string, preferred: number) => {
+    let size = Math.round(preferred)
+    do { ctx.font = `700 ${size}px ${family}`; if (ctx.measureText(line).width <= canvas.width - 42) break; size-- } while (size > 11)
   }
   lines.forEach((line, i) => {
-    fit(line, Math.min(lineHeight * .75, c.height * .43))
-    ctx.fillText(line, c.width / 2, c.height * (options.small ? .13 : .12) + lineHeight * (i + .5))
+    fit(line, Math.min(lineHeight * .8, canvas.height * .43))
+    ctx.fillText(line, canvas.width / 2, canvas.height * (options.small ? .11 : .12) + lineHeight * (i + .5))
   })
-  if (options.small) { fit(options.small, c.height * .18); ctx.fillText(options.small, c.width / 2, c.height * .82) }
-  const texture = new CanvasTexture(c); texture.colorSpace = SRGBColorSpace; texture.anisotropy = 4
+  if (options.small) { fit(options.small, canvas.height * .17); ctx.fillText(options.small, canvas.width / 2, canvas.height * .84) }
+  const texture = new CanvasTexture(canvas)
+  texture.colorSpace = SRGBColorSpace
+  texture.anisotropy = 2
+  signCache.set(key, texture)
   return texture
 }

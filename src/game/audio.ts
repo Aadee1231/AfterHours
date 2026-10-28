@@ -7,7 +7,7 @@ class AudioDirector {
   private breath: GainNode | null = null
   private breathPan: StereoPannerNode | null = null
   private active = false
-  private surface: Zone = 'north'
+  private surface: Zone = 'atrium'
   private entityDistance = 24
   private heartbeatAt = 0
   private noise: AudioBuffer | null = null
@@ -105,11 +105,13 @@ class AudioDirector {
       this.hiss(.29, .035 + near * .19, 210 + near * 140, pan)
       this.tone(62, 35, .19, .02 + near * .13)
     } else {
-      // Carpet at the study desks, ringing metal in the stacks, harder South Tower tile.
-      const profile = surface === 'north' ? { hiss: .065, cutoff: 420, tone: 78 } : surface === 'stacks' ? { hiss: .11, cutoff: 1250, tone: 118 } : { hiss: .095, cutoff: 900, tone: 98 }
+      // Atrium tile echoes lightly; upper lounge absorbs steps, offices have short carpeted thuds.
+      const profile = surface === 'atrium' ? { hiss: .072, cutoff: 1050, tone: 110 }
+        : surface === 'lounge' ? { hiss: .055, cutoff: 470, tone: 82 }
+          : { hiss: .06, cutoff: 640, tone: 91 }
       this.hiss(.14, profile.hiss, profile.cutoff)
-      this.tone(profile.tone, 40, .12, .034)
-      if (surface === 'stacks') this.tone(740, 510, .055, .009, 'triangle')
+      this.tone(profile.tone, 40, .12, .034, 'sine')
+      if (surface === 'atrium') this.tone(780, 510, .065, .008, 'triangle')
     }
   }
   click() { this.tone(720, 480, 0.08, 0.052) }
@@ -117,7 +119,33 @@ class AudioDirector {
   chair(pan = .5) { this.hiss(.7, .17, 720, pan); this.tone(195, 82, .56, .083, 'triangle') }
   phone(open: boolean) { this.hiss(0.18, 0.08, 1800); this.tone(open ? 780 : 500, open ? 960 : 280, 0.12, 0.035) }
   clue() { this.tone(660, 660, 0.3, 0.08); this.tone(880, 880, 0.4, 0.05, 'sine', 0.14) }
-  book(pan = -.7) { this.hiss(.88, .36, 550, pan); this.tone(72, 28, .6, .19) }
+  book(pan = -.7) { this.hiss(.88, .36, 550, pan); this.tone(72, 28, .6, .19) } // Legacy API: distant impact, not a world prop.
+  /** Local synthetic chime and narrow-band PA interference; no recorded speech or network. */
+  announcement(kind: string) {
+    if (!this.ctx || !this.master) return
+    const sequences: Record<string, number[]> = {
+      closing: [784, 622, 466], power: [440, 588, 784],
+      badge: [659, 784, 988], release: [523, 784, 1046],
+    }
+    const notes = sequences[kind] ?? [622, 523, 466]
+    this.hiss(kind === 'closing' ? 2.5 : 1.8, .038, 1120)
+    notes.forEach((note, i) => {
+      this.tone(note, note * .98, .32, .043, 'sine', .12 + i * .29)
+      this.tone(note / 2, note / 2 * .97, .34, .023, 'triangle', .12 + i * .29)
+    })
+    const ctx = this.ctx, time = ctx.currentTime + .08
+    const carrier = ctx.createOscillator(), band = ctx.createBiquadFilter(), envelope = ctx.createGain()
+    carrier.type = 'sawtooth'; carrier.frequency.setValueAtTime(94, time)
+    carrier.frequency.linearRampToValueAtTime(kind === 'release' ? 124 : 76, time + 1.3)
+    band.type = 'bandpass'; band.frequency.value = 690; band.Q.value = 1.7
+    envelope.gain.setValueAtTime(.0001, time)
+    envelope.gain.linearRampToValueAtTime(.026, time + .15)
+    envelope.gain.linearRampToValueAtTime(.012, time + 1.3)
+    envelope.gain.exponentialRampToValueAtTime(.0001, time + 1.8)
+    carrier.connect(band).connect(envelope).connect(this.master)
+    carrier.start(time); carrier.stop(time + 1.85)
+    carrier.onended = () => { carrier.disconnect(); band.disconnect(); envelope.disconnect() }
+  }
   notification() { this.tone(970, 970, 0.2, 0.11); this.tone(770, 770, 0.42, 0.1, 'sine', 0.17) }
   flicker() { this.hiss(1.7, 0.28, 2300); this.tone(120, 65, 1.8, 0.08, 'sawtooth') }
   climax() { this.hiss(3.5, 0.32, 750); this.tone(47, 80, 3.5, 0.3); this.tone(113, 58, 2.8, 0.12, 'triangle') }

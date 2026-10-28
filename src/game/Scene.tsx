@@ -28,8 +28,8 @@ function Entity() {
   </group>
 }
 
-function RenderBudget() {
-  const { gl, size, setDpr } = useThree()
+function RenderBudget({ setDpr }: { setDpr: (dpr: number) => void }) {
+  const { gl, size } = useThree()
   const budget = useRef(900_000)
   const sample = useRef({ seconds: 0, frames: 0 })
   useEffect(() => {
@@ -151,8 +151,9 @@ function Controller({ onLocked }: { onLocked: (value: boolean) => void }) {
 
 export function Scene({ onLocked, onReady }: { onLocked: (value: boolean) => void; onReady: () => void }) {
   const [contextLost, setContextLost] = useState(false)
+  const [dpr, setDpr] = useState(1)
   return <>
-    <Canvas camera={{ fov: 68, near: 0.08, far: 60 }} dpr={1} gl={{ antialias: false, powerPreference: 'high-performance' }}
+    <Canvas camera={{ fov: 68, near: 0.08, far: 60 }} dpr={dpr} gl={{ antialias: false, powerPreference: 'high-performance' }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping; gl.toneMappingExposure = 1.25
         gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); setContextLost(true); useGame.getState().pause() })
@@ -162,7 +163,7 @@ export function Scene({ onLocked, onReady }: { onLocked: (value: boolean) => voi
       <fog attach="fog" args={['#151c18', 9, 35]} />
       <ambientLight intensity={0.36} color="#9aa88a" />
       <hemisphereLight args={['#b4c5a7', '#363a26', 0.8]} />
-      <RenderBudget />
+      <RenderBudget setDpr={setDpr} />
       <Suspense fallback={null}><Library /><Entity /></Suspense>
       <Controller onLocked={onLocked} />
     </Canvas>

@@ -5,7 +5,12 @@ import { CLUES, ENTITY_SPAWN, ESCAPE_CODE, EXIT, SPAWN, distance, findPath, line
 export type Phase = 'title' | 'intro' | 'playing' | 'paused' | 'caught' | 'escaped'
 export type PhoneTab = 'notes' | 'map'
 const storage = {
-  get(key: string, fallback = 0) { try { return Number(localStorage.getItem(`after-hours:${key}`)) || fallback } catch { return fallback } },
+  get(key: string, fallback = 0) {
+    try {
+      const saved = localStorage.getItem(`after-hours:${key}`)
+      return saved !== null && saved.trim() !== '' && Number.isFinite(Number(saved)) ? Number(saved) : fallback
+    } catch { return fallback }
+  },
   set(key: string, value: number) { try { localStorage.setItem(`after-hours:${key}`, String(value)) } catch { /* Private browsing may disable storage. */ } },
 }
 export const runtime = {
@@ -98,7 +103,7 @@ export const useGame = create<GameState>((set, get) => ({
     if (!s.phone) { announce('Too dark to read. Open your phone [Q], then press [E].'); return }
     const clue = CLUES[s.prompt]
     set({ clues: [...s.clues, clue.id], selectedNote: clue.id, tab: 'notes' })
-    audio.clue(); announce(`Record ${clue.order}/4 saved. Read the digit in NOTES. Close your phone when you’re done.`, 7)
+    audio.clue(); announce(`Record ${['I', 'II', 'III', 'IV'][clue.id]} saved. ${s.clues.length + 1}/4 collected. Read the digit in NOTES.`, 7)
     if (s.clues.length === 0) { runtime.clueAt = runtime.time; runtime.scareAt = runtime.time; set({ flickerUntil: runtime.time + 4 }); audio.flicker(); runtime.triggers.add('first-clue') }
     if (s.clues.length === 1) runtime.secondClueAt = runtime.time
   },

@@ -1,10 +1,23 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CLUES, ENTITY_SPAWN, ESCAPE_CODE, EXIT, OBSTACLES, SPAWN, distance, findPath, isBlocked, lineClear, moveWithCollision, travelClear, type Point } from '../src/game/world'
 import { runtime, tick, useGame } from '../src/game/store'
 
 const advance = (seconds: number, input = { x: 0, z: 0 }) => { for (let i = 0; i < seconds * 60; i++) tick(1 / 60, input, false) }
 
 beforeEach(() => { useGame.getState().start(); useGame.getState().enter() })
+
+describe('saved settings', () => {
+  it('restores zero volume and falls back safely for absent or invalid values', async () => {
+    try {
+      for (const [saved, expected] of [[null, .65], ['', .65], ['invalid', .65], ['Infinity', .65], ['0', 0], ['20', .2]] as const) {
+        vi.stubGlobal('localStorage', { getItem: (key: string) => key === 'after-hours:volume' ? saved : null })
+        vi.resetModules()
+        const { useGame: restored } = await import('../src/game/store')
+        expect(restored.getState().volume).toBe(expected)
+      }
+    } finally { vi.unstubAllGlobals(); vi.resetModules() }
+  })
+})
 
 describe('collision and navigation', () => {
   it('keeps every wall solid even for a large movement', () => {

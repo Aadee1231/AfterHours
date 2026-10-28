@@ -209,6 +209,10 @@ export const useGame = create<GameState>((set, get) => ({
       set({ panel: 'badge', panelError: '', phone: true })
     } else if (id === 'release' && !s.authorized) {
       if (!s.badge) { announce('Override badge missing. Recover it on Floor 3 before using this station.'); return }
+      if (!runtime.triggers.has('release-reading')) {
+        runtime.triggers.add('release-reading')
+        set({ graceUntil: Math.max(s.graceUntil, runtime.time + 20) })
+      }
       set({ panel: 'release', panelError: '', phone: true })
     } else return
     runtime.phoneUi = false; audio.phone(true); runtime.unlock?.()

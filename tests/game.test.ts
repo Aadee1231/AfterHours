@@ -125,6 +125,21 @@ describe('the complete Talley story', () => {
   })
 })
 describe('fair pursuit, transitions and recovery', () => {
+  it('gives a one-time readable release-terminal buffer without refreshing it or disabling later danger', () => {
+    power(); climb('up2'); badge(); climb('up3'); at('release')
+    const deadline = useGame.getState().graceUntil
+    expect(deadline - runtime.time).toBe(20)
+    runtime.entity = { x: 15, z: -7 }; runtime.entityFloor = 4
+    const initial = { ...runtime.entity }; advance(5)
+    expect(distance(initial, runtime.entity)).toBeGreaterThan(1)
+    useGame.getState().closePanel(); at('release')
+    expect(useGame.getState().graceUntil).toBe(deadline)
+    useGame.getState().choose(2)
+    expect(useGame.getState().graceUntil).toBe(deadline)
+    advance(10); expect(useGame.getState().phase).toBe('playing')
+    advance(14); expect(useGame.getState().phase).toBe('caught')
+    useGame.getState().retry(); expect(runtime.triggers.has('release-reading')).toBe(false)
+  })
   it('never catches the initial lesson even after prolonged phone use', () => {
     at('entrance'); useGame.getState().togglePhone(); runtime.entityFloor = 2; runtime.entity = { ...runtime.player }
     advance(120); expect(useGame.getState().phase).toBe('playing')

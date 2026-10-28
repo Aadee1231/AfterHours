@@ -65,7 +65,7 @@ Title and pause menus include volume/mute, reduced flashing, Story/Standard diff
 
 1. **The Empty Atrium / Floor 2:** try the entrance, find the information desk, read the posted service order, restore backup power. Learn the phone rule with a safe balcony watcher. Chapter checkpoint saved.
 2. **Someone’s Still Here / Floor 3:** ascend the visible east white stair. Phone light develops the faded ballroom event-board venue; short glances preserve exposure. Recover the matching event's override badge. Chapter checkpoint saved.
-3. **The Last Announcement / Floor 4:** ascend the west white stair, scan the badge, arm the doors, and release the main entrance. Descend through Floor 3 to Floor 2 and use the original main doors for the escape cinematic.
+3. **The Last Announcement / Floor 4:** ascend the west white stair, scan the badge, arm the doors, and release the main entrance. The first terminal connection gives a visible, non-renewable 20-second reading buffer: it can approach, but cannot catch you until the timer ends. Descend through Floor 3 to Floor 2 and use the original main doors for the escape cinematic.
 
 One primary objective stays visible. After 50 seconds without progress, a subtle hint appears; after 95 seconds, guidance becomes explicit. Instructions and discovered information are saved in Messages. The map shows visited floors, landmarks and the player, never the entity. Visible 2.8-second stair animations show actual elevation changes and announce the destination; they are not silently swapped rooms. New-floor placements stay at least 15 metres away with at least 12 seconds' grace. Normal pursuit cannot change floors or cross the atrium void.
 

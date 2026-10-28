@@ -15,7 +15,8 @@ export function PuzzlePanel() {
     s.choose(value)
     if (!useGame.getState().panel) runtime.lock?.()
   }
-  const danger = s.threat > .7 ? 'TOO CLOSE — CLOSE THE PANEL AND PHONE NOW' : s.threat > .4 ? 'FOOTSTEPS NEAR. PUT THE PHONE AWAY TO STOP IT.' : 'THE PHONE IS OPEN. IT CAN APPROACH.'
+  const reading = s.panel === 'release' && runtime.triggers.has('release-reading') && s.graceUntil > s.elapsed
+  const danger = reading ? `FIRST CONNECTION · ${Math.ceil(s.graceUntil - s.elapsed)}s SAFE READING. IT CAN STILL APPROACH — CLOSE THE PHONE BEFORE TIME RUNS OUT.` : s.threat > .7 ? 'TOO CLOSE — CLOSE THE PANEL AND PHONE NOW' : s.threat > .4 ? 'FOOTSTEPS NEAR. PUT THE PHONE AWAY TO STOP IT.' : 'THE PHONE IS OPEN. IT CAN APPROACH.'
   const title = s.panel === 'power' ? 'Restore backup power.' : s.panel === 'badge' ? 'Find the override badge.' : 'Release the main doors.'
   return <div className="modal-backdrop puzzle-backdrop"><section ref={dialog} className="puzzle-panel panel" role="dialog" aria-modal="true" aria-labelledby="puzzle-heading" onKeyDown={event => {
     if ((event.key === 'Escape' || event.code === 'KeyQ') && !event.repeat) { event.preventDefault(); event.stopPropagation(); close(); return }

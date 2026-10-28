@@ -94,6 +94,14 @@ Automated tests cover floor bounds, the upper-floor atrium void, every interacti
 
 ## Rendering and architecture
 
+### Browser verification
+
+Production-preview testing used actual keyboard/mouse inputs, with no injected progress or teleportation. Independent fresh onboarding, the full 24-second intro, a genuine three-floor escape, wrong puzzle choices, both earned checkpoint retries, phone/focus recovery, pause/restart/replay, void blocking and visible death/escape sequences passed on the initial Talley gameplay revision. The subsequent reading-buffer revision was separately played from a fresh start through an earned badge, intentional post-expiry catch/retry, and genuine escape; no additional unintended terminal death occurred.
+
+Latest assisted clear: **05:00 game time**, approximately **8:15 wall time**, including intro, inspections and an intentional catch. The earlier full regression run was **08:15 game time / approximately 13:30 wall time**. Checkpoint retries rewind game time; neither result proves the 10–15-minute blind-player target. The buffer visibly counted down, did not renew after wrong choices or reopening, froze pursuit on Q without pausing the deadline, and allowed a real catch after expiry.
+
+Short SwiftShader samples on the initial Talley build were approximately **45–47 FPS on Floor 2, 56 FPS on Floor 3 and 50 FPS on Floor 4**, at DPR **0.45** and a **576×378** drawing buffer. Rendering was visibly pixelated; these are not sustained benchmarks or hardware-GPU measurements. Both runs captured zero exceptions, console errors or failed requests. Three.js Clock deprecation and software-WebGL warnings remain. WebAudio graph activity was confirmed, not actual speaker-output quality. Story/High settings and post-consumption new-run buffer reset were not separately browser-tested; checkpoint-retry buffer reset was.
+
 - `src/game/world.ts`: fictional floor elevations, anchors, authoritative collider arrays, seeded puzzles and per-floor routing.
 - `src/game/store.ts`: intro / play / stairs / death / escape state machine, progression, checkpoint retry, hints, phone rule and persistence.
 - `src/game/Scene.tsx`: actual pointer lock, movement, animated stairs, intro/exit cameras, humanoid animation, adaptive DPR and flashlight.

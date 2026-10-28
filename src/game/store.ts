@@ -125,9 +125,18 @@ export const useGame = create<GameState>((set, get) => ({
 }))
 
 export function tick(dt: number, input: Point, sprint: boolean) {
+  if (!Number.isFinite(dt) || dt <= 0) return
+  let remaining = Math.min(dt, 1)
+  while (remaining > 0.000001 && useGame.getState().phase === 'playing') {
+    const step = Math.min(remaining, 0.05)
+    tickStep(step, input, sprint)
+    remaining -= step
+  }
+}
+
+function tickStep(dt: number, input: Point, sprint: boolean) {
   const s = useGame.getState()
   if (s.phase !== 'playing') return
-  dt = Math.min(dt, 0.05)
   runtime.time += dt
   runtime.moving = !s.keypad && Math.hypot(input.x, input.z) > 0.01
   if (runtime.moving) {

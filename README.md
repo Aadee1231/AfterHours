@@ -86,7 +86,7 @@ The included `vercel.json` supplies the framework, build output, safe response h
 - `src/game/audio.ts`: gesture-unlocked original Web Audio sound design, pause ambience, volume/mute.
 - `src/components/`: believable phone and physical-keypad overlay.
 
-Rendering uses instanced books, reused book geometry/materials, DPR capped at 1.5, distance fog, and no expensive shadow maps. Capture mode preserves the phone and threat indicator so a vertical crop can clearly show the mechanic. Native portrait touch play is not implemented: small touch devices receive a desktop-play notice instead.
+Rendering uses instanced books, reused book geometry/materials, adaptive resolution (DPR capped at 1.5 and a 900k pixel budget), distance fog, and no expensive shadow maps. Software GPUs start at a lower pixel budget; sustained slow frames reduce 3D resolution without blurring the HTML phone or HUD. Simulation substeps preserve movement and elapsed time at low render rates, with a one-second maximum stall catch-up. Hardware acceleration is still recommended. Capture mode preserves the phone and threat indicator so a vertical crop can clearly show the mechanic. Native portrait touch play is not implemented: small touch devices receive a desktop-play notice instead.
 
 ## Content and limitations
 

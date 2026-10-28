@@ -28,6 +28,32 @@ function Entity() {
   </group>
 }
 
+function RenderBudget() {
+  const { gl, size, setDpr } = useThree()
+  const budget = useRef(900_000)
+  const sample = useRef({ seconds: 0, frames: 0 })
+  useEffect(() => {
+    const context = gl.getContext()
+    const extension = context.getExtension('WEBGL_debug_renderer_info')
+    const renderer = extension ? String(context.getParameter(extension.UNMASKED_RENDERER_WEBGL)) : ''
+    budget.current = /swiftshader|llvmpipe|software/i.test(renderer) ? 220_000 : 900_000
+    setDpr(Math.min(devicePixelRatio, 1.5, Math.sqrt(budget.current / (size.width * size.height))))
+    sample.current = { seconds: 0, frames: 0 }
+  }, [gl, setDpr, size.width, size.height])
+  useFrame((_, dt) => {
+    sample.current.seconds += dt
+    sample.current.frames++
+    if (sample.current.seconds < 3) return
+    const fps = sample.current.frames / sample.current.seconds
+    if (fps < 26 && budget.current > 80_000) {
+      budget.current = Math.max(80_000, budget.current * 0.65)
+      setDpr(Math.min(devicePixelRatio, 1.5, Math.sqrt(budget.current / (size.width * size.height))))
+    }
+    sample.current = { seconds: 0, frames: 0 }
+  })
+  return null
+}
+
 function Controller({ onLocked }: { onLocked: (value: boolean) => void }) {
   const { camera, gl } = useThree()
   const controls = useRef<LockControls>(null)
@@ -126,7 +152,7 @@ function Controller({ onLocked }: { onLocked: (value: boolean) => void }) {
 export function Scene({ onLocked, onReady }: { onLocked: (value: boolean) => void; onReady: () => void }) {
   const [contextLost, setContextLost] = useState(false)
   return <>
-    <Canvas camera={{ fov: 68, near: 0.08, far: 60 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: 'high-performance' }}
+    <Canvas camera={{ fov: 68, near: 0.08, far: 60 }} dpr={1} gl={{ antialias: false, powerPreference: 'high-performance' }}
       onCreated={({ gl }) => {
         gl.toneMapping = THREE.ACESFilmicToneMapping; gl.toneMappingExposure = 1.25
         gl.domElement.addEventListener('webglcontextlost', event => { event.preventDefault(); setContextLost(true); useGame.getState().pause() })
@@ -136,6 +162,7 @@ export function Scene({ onLocked, onReady }: { onLocked: (value: boolean) => voi
       <fog attach="fog" args={['#151c18', 9, 35]} />
       <ambientLight intensity={0.36} color="#9aa88a" />
       <hemisphereLight args={['#b4c5a7', '#363a26', 0.8]} />
+      <RenderBudget />
       <Suspense fallback={null}><Library /><Entity /></Suspense>
       <Controller onLocked={onLocked} />
     </Canvas>

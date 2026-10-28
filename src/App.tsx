@@ -99,7 +99,7 @@ function HUD({ locked }: { locked: boolean }) {
   if (s.phase !== 'playing') return null
   const prompt = s.prompt === 'exit' ? 'Use stairwell keypad' : s.prompt !== null ? s.phone ? `Read ${CLUES[s.prompt].title.toLowerCase()}` : 'Open phone to read this record' : null
   const moving = s.phone
-  return <div className={`hud ${s.capture ? 'capture-mode' : ''}`}>
+  return <div className={`hud ${s.phone ? 'phone-raised' : ''} ${s.capture ? 'capture-mode' : ''}`}>
     <header className="hud-top nonessential"><div><div className="eyebrow">D. H. HILL / FLOOR 07</div><h2>{s.clues.length === 4 ? 'Reach the emergency stairwell.' : 'Find a way out.'}</h2><p>{s.clues.length === 4 ? 'North wall. Four digits. Don’t look back.' : 'Four records. One emergency stairwell.'}</p></div>
       <div className="hud-records"><span>RECORDS</span><div>{CLUES.map(c => <i key={c.id} className={s.clues.includes(c.id) ? 'found' : ''}>{['I', 'II', 'III', 'IV'][c.id]}</i>)}</div><small>{formatTime(s.elapsed)}</small></div>
     </header>

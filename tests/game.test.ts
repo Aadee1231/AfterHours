@@ -52,6 +52,28 @@ describe('collision and navigation', () => {
 })
 
 describe('phone / stalker rule', () => {
+  it('keeps elapsed time and movement consistent at low render frame rates', () => {
+    const simulate = (fps: number) => {
+      useGame.getState().start(); useGame.getState().enter()
+      for (let i = 0; i < fps * 2; i++) tick(1 / fps, { x: -1, z: 0 }, false)
+      return { elapsed: runtime.time, player: { ...runtime.player } }
+    }
+    const smooth = simulate(60)
+    for (const fps of [1, 5, 15, 30]) {
+      const slow = simulate(fps)
+      expect(slow.elapsed).toBeCloseTo(smooth.elapsed, 8)
+      expect(slow.player.x).toBeCloseTo(smooth.player.x, 8)
+      expect(slow.player.z).toBeCloseTo(smooth.player.z, 8)
+      expect(isBlocked(slow.player.x, slow.player.z)).toBe(false)
+    }
+  })
+  it('rejects invalid deltas and bounds a stalled frame without tunneling', () => {
+    for (const dt of [NaN, Infinity, -1, 0]) tick(dt, { x: 0, z: 1 }, true)
+    expect(runtime.time).toBe(0)
+    tick(120, { x: 0, z: 1 }, true)
+    expect(runtime.time).toBeCloseTo(1)
+    expect(isBlocked(runtime.player.x, runtime.player.z)).toBe(false)
+  })
   it('freezes the entity exactly when the phone is closed', () => {
     advance(20)
     expect(runtime.entity).toEqual(ENTITY_SPAWN)

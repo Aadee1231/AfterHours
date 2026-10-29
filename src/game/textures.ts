@@ -16,9 +16,9 @@ export function surfaceTexture(kind: Surface, repeat: [number, number] = [1, 1])
   const ctx = canvas.getContext('2d')!, size = canvas.width
   const rand = seeded(kind.split('').reduce((n, c) => n * 33 + c.charCodeAt(0), 71))
   const backgrounds: Record<Surface, string> = {
-    terrazzo: '#e9e4d7', plaster: '#efeee5', glass: '#20313f', pavers: '#97968b',
+    terrazzo: '#c8cdcc', plaster: '#efeee5', glass: '#20313f', pavers: '#97968b',
     floor: '#e9e4d7', ceiling: '#ecede6', brick: '#ae9d8c', wall: '#efeee5',
-    wood: '#b9a287', carpet: '#7c7473', metal: '#899396',
+    wood: '#b9a287', carpet: '#686c70', metal: '#899396',
   }
   ctx.fillStyle = backgrounds[kind]; ctx.fillRect(0, 0, size, size)
   if (kind === 'glass') {
@@ -56,6 +56,14 @@ export function surfaceTexture(kind: Surface, repeat: [number, number] = [1, 1])
       ctx.strokeStyle = 'rgba(69,51,42,.12)'; ctx.lineWidth = 1
       const y = rand() * size
       ctx.beginPath(); ctx.moveTo(0, y); ctx.bezierCurveTo(90, y - 3, 170, y + 4, size, y); ctx.stroke()
+    }
+    if (kind === 'carpet') {
+      for (let y = 0; y < size; y += 4) {
+        ctx.strokeStyle = y % 12 ? 'rgba(20,25,29,.15)' : 'rgba(220,223,218,.10)'
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(size, y); ctx.stroke()
+      }
+      ctx.fillStyle = 'rgba(148,36,47,.50)'; ctx.fillRect(16, 0, 9, size)
+      ctx.fillStyle = 'rgba(38,42,46,.25)'; ctx.fillRect(60, 0, 30, size)
     }
   }
   const texture = new CanvasTexture(canvas)

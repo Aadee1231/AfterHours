@@ -6,10 +6,27 @@ import * as THREE from 'three'
 import { Library } from './Library'
 import { audio } from './audio'
 import { runtime, tick, useGame } from './store'
-import { ANCHORS, SPAWN, floorY, zoneAt, type Floor, type Point } from './world'
+import { ANCHORS, SPAWN, floorY, stairPosition, zoneAt, type Floor, type Point } from './world'
 
 const EYE = 1.67
 const still = { x: 0, z: 0 }
+const referenceLighting = import.meta.env.DEV && new URLSearchParams(location.search).get('lighting') === 'reference'
+
+function HouseLighting() {
+  const ambient = useRef<THREE.AmbientLight>(null!)
+  const sky = useRef<THREE.HemisphereLight>(null!)
+  useFrame((_, dt) => {
+    const s = useGame.getState()
+    const dim = s.authorized ? .72 : s.badge ? .83 : s.power ? .92 : 1
+    ambient.current.intensity = THREE.MathUtils.damp(ambient.current.intensity, referenceLighting ? 1.35 : .72 * dim, 2, dt)
+    sky.current.intensity = THREE.MathUtils.damp(sky.current.intensity, referenceLighting ? 1.6 : 1.15 * dim, 2, dt)
+  })
+  return <>
+    <ambientLight ref={ambient} intensity={referenceLighting ? 1.35 : .72} color={referenceLighting ? '#ffffff' : '#f5e9d8'} />
+    <hemisphereLight ref={sky} args={['#f2f5f5', '#766e68', referenceLighting ? 1.6 : 1.15]} />
+    {referenceLighting && <directionalLight position={[-9, 22, 12]} intensity={1.8} color="#fff9ec" />}
+  </>
+}
 
 function Entity() {
   const root = useRef<THREE.Group>(null!)
@@ -273,16 +290,14 @@ function Controller({ onLocked }: { onLocked: (value: boolean) => void }) {
       const flight = s.transition
       if (flight) {
         const p = THREE.MathUtils.clamp(flight.progress, 0, 1)
-        // The open stairwell is represented by visible steps/rails, not a teleport.
-        camera.position.set(THREE.MathUtils.lerp(flight.start.x, flight.end.x, p),
-          THREE.MathUtils.lerp(floorY(flight.from), floorY(flight.to), p) + EYE + Math.sin(p * Math.PI * 13) * .025,
-          THREE.MathUtils.lerp(flight.start.z, flight.end.z, p))
-        const heading = side.current.set(flight.end.x - flight.start.x, 0, flight.end.z - flight.start.z).normalize()
-        const arrival = direction.current.set(flight.end.x + heading.x * 2, floorY(flight.to) + EYE, flight.end.z + heading.z * 2)
-        // Following the flight keeps the height change obvious while the gaze reaches the landing.
-        tmp.current.copy(camera.position).addScaledVector(heading, 4.5)
-        tmp.current.y += (floorY(flight.to) - floorY(flight.from)) * .35
-        camera.lookAt(tmp.current.lerp(arrival, p * .65))
+        const point = stairPosition(flight.from, flight.to, p)
+        const ahead = stairPosition(flight.from, flight.to, Math.min(.999, p + .075))
+        const behind = stairPosition(flight.from, flight.to, Math.max(0, p - .025))
+        camera.position.set(point.x, point.y + EYE + Math.sin(p * Math.PI * 25) * .018, point.z)
+        const heading = side.current.set(ahead.x - behind.x, 0, ahead.z - behind.z).normalize()
+        tmp.current.copy(camera.position).addScaledVector(heading, 3)
+        tmp.current.y += (ahead.y - point.y) * .7
+        camera.lookAt(tmp.current)
       }
     } else if (s.phase === 'playing') {
       if (lastPhase.current === 'intro') {
@@ -393,12 +408,12 @@ export const Scene = memo(function Scene({ onLocked, onReady }: { onLocked: (val
       }}>
       <color attach="background" args={['#1d2830']} />
       <fog attach="fog" args={['#1d2830', 30, 78]} />
-      <ambientLight intensity={.72} color="#f5e9d8" />
-      <hemisphereLight args={['#f2f5f5', '#766e68', 1.15]} />
+      <HouseLighting />
       <RenderBudget setDpr={setDpr} />
       <Suspense fallback={null}><Library /><Entity /><PoolQuality /></Suspense>
       <Controller onLocked={onLocked} />
     </Canvas>
+    {referenceLighting && <div style={{ position: 'fixed', left: 12, bottom: 12, top: 'auto', right: 'auto', width: 'auto', height: 'auto', zIndex: 100, color: '#fff', background: '#222', padding: '6px 10px', font: '12px monospace', pointerEvents: 'none' }}>REFERENCE LIGHTING · DEVELOPMENT REVIEW ONLY</div>}
     {contextLost && <div className="fatal-screen"><h2>The lights went out.</h2><p>Your graphics context was interrupted. Reload to restore it.</p><button onClick={() => location.reload()}>Reload game</button></div>}
   </>
 })

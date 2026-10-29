@@ -3,8 +3,9 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Box, Instances, Sign, type Instance, type XYZ } from './primitives'
 import { UpperFloors } from './UpperFloors'
+import { PublicInteriors } from './PublicInteriors'
 import { runtime, useGame } from './store'
-import { ANCHORS, COLUMNS, ROOM, SOFAS, STAIRS, TABLES, type Floor } from './world'
+import { ANCHORS, ATRIUM_OPENINGS, COLUMNS, ROOM, SOFAS, STAIRS, STAIR_PATHS, TABLES } from './world'
 import { surfaceTexture } from './textures'
 
 // Keep the historical Box export for callers that still import it from Library.
@@ -17,20 +18,21 @@ const concrete = new THREE.MeshLambertMaterial({ color: '#f3f0e7' })
 const chalk = new THREE.MeshLambertMaterial({ color: '#fffaf0' })
 const upholstery = new THREE.MeshLambertMaterial({ color: '#bf2530', side: THREE.DoubleSide })
 const seatMaterial = new THREE.MeshLambertMaterial({ color: '#da3740', side: THREE.DoubleSide })
-const glassMaterial = new THREE.MeshBasicMaterial({ color: '#accad0', opacity: .21, transparent: true, depthWrite: false, side: THREE.DoubleSide })
+const glassMaterial = new THREE.MeshBasicMaterial({ color: '#b7d4da', opacity: .14, transparent: true, depthWrite: false, side: THREE.DoubleSide })
 const beamWhite = new THREE.MeshLambertMaterial({ color: '#efeee9' })
 
 type Rect = { x1: number; x2: number; z1: number; z2: number }
-const ring: Rect[] = [
-  { x1: -22, x2: 22, z1: -22, z2: -10 },
-  { x1: -22, x2: 22, z1: 10, z2: 22 },
-  { x1: -22, x2: -9, z1: -10, z2: 10 },
-  { x1: 9, x2: 22, z1: -10, z2: 10 },
+const openings = [ATRIUM_OPENINGS[3], ATRIUM_OPENINGS[4], { x1: -9, x2: 6.5, z1: -11.5, z2: 8 }]
+const ring = (r: Rect): Rect[] => [
+  { x1: -22, x2: 22, z1: -22, z2: r.z1 },
+  { x1: -22, x2: 22, z1: r.z2, z2: 22 },
+  { x1: -22, x2: r.x1, z1: r.z1, z2: r.z2 },
+  { x1: r.x2, x2: 22, z1: r.z1, z2: r.z2 },
 ]
 // The openings include the complete animated stair runs, including the portions
 // that cross the front/back ring strips. A single uncut strip would hide the climb.
-const eastOpening: Rect = { x1: 14.3, x2: 17.7, z1: -3, z2: 11 }
-const westOpening: Rect = { x1: -17.7, x2: -14.3, z1: -11, z2: 3 }
+const eastOpening: Rect = { x1: 10.3, x2: 17.7, z1: 3, z2: 11 }
+const westOpening: Rect = { x1: -17.7, x2: -10.3, z1: -11, z2: -3 }
 function subtract(rect: Rect, cut: Rect): Rect[] {
   const x1 = Math.max(rect.x1, cut.x1), x2 = Math.min(rect.x2, cut.x2)
   const z1 = Math.max(rect.z1, cut.z1), z2 = Math.min(rect.z2, cut.z2)
@@ -42,18 +44,19 @@ function subtract(rect: Rect, cut: Rect): Rect[] {
     { x1, x2, z1: z2, z2: rect.z2 },
   ].filter(r => r.x2 - r.x1 > .001 && r.z2 - r.z1 > .001)
 }
-const slabs = ([3, 4] as Floor[]).flatMap(floor =>
-  ring.flatMap(r => (floor === 3 ? [eastOpening, westOpening] : [westOpening]).reduce<Rect[]>((parts, cut) => parts.flatMap(p => subtract(p, cut)), [r]))
-    .map(r => ({ at: [(r.x1 + r.x2) / 2, (floor - 2) * 5 - .24, (r.z1 + r.z2) / 2] as XYZ,
-      size: [r.x2 - r.x1, .48, r.z2 - r.z1] as XYZ, color: floor === 3 ? '#f5f0e5' : '#e7ebea' })))
-const railCaps: Instance[] = [5, 10].flatMap(y => [
-  ...[-10, 10].map(z => ({ at: [0, y + 1.11, z] as XYZ, size: [18, .09, .09] as XYZ, color: '#f9f8f3' })),
-  ...[-9, 9].map(x => ({ at: [x, y + 1.11, 0] as XYZ, size: [.09, .09, 20] as XYZ, color: '#f9f8f3' })),
+const slabs = openings.flatMap((opening, i) =>
+  ring(opening).flatMap(r => (i === 0 ? [eastOpening, westOpening] : i === 1 ? [westOpening] : []).reduce<Rect[]>((parts, cut) => parts.flatMap(p => subtract(p, cut)), [r]))
+    .map(r => ({ at: [(r.x1 + r.x2) / 2, (i + 1) * 5 - .24, (r.z1 + r.z2) / 2] as XYZ,
+      size: [r.x2 - r.x1, .48, r.z2 - r.z1] as XYZ, color: '#e3e3df' })))
+const edges = openings.flatMap((r, i) => [
+  ...[r.z1, r.z2].map(z => ({ at: [(r.x1 + r.x2) / 2, (i + 1) * 5, z] as XYZ, size: [r.x2 - r.x1, 1, .045] as XYZ })),
+  ...[r.x1, r.x2].map(x => ({ at: [x, (i + 1) * 5, (r.z1 + r.z2) / 2] as XYZ, size: [.045, 1, r.z2 - r.z1] as XYZ })),
 ])
-const fascia: Instance[] = [5, 10].flatMap(y => [
-  ...[-10, 10].map(z => ({ at: [0, y - .42, z] as XYZ, size: [18, .36, .22] as XYZ, color: '#fffdf6' })),
-  ...[-9, 9].map(x => ({ at: [x, y - .42, 0] as XYZ, size: [.22, .36, 20] as XYZ, color: '#fffdf6' })),
+const railCaps: Instance[] = edges.flatMap(e => [
+  { at: [e.at[0], e.at[1] + 1.1, e.at[2]], size: [e.size[0], .055, e.size[2]], color: '#aab1b4' },
+  ...Array.from({ length: 7 }, (_, i) => ({ at: [e.at[0] + (i / 6 - .5) * (e.size[0] > 1 ? e.size[0] : 0), e.at[1] + .52, e.at[2] + (i / 6 - .5) * (e.size[2] > 1 ? e.size[2] : 0)] as XYZ, size: [.045, 1.04, .045] as XYZ, color: '#a6adb0' })),
 ])
+const fascia: Instance[] = edges.map(e => ({ at: [e.at[0], e.at[1] - .25, e.at[2]], size: [Math.max(.16, e.size[0]), .44, Math.max(.16, e.size[2])], color: '#f0f0ec' }))
 const windowGrid: Instance[] = [
   ...[-21.89, 21.89].flatMap(x => [-18, -12, -6, 0, 6, 12, 18].map(z => ({ at: [x, 8.9, z] as XYZ, size: [.14, 17.6, .12] as XYZ, color: '#f4f1e9' }))),
   ...[-21.89, 21.89].flatMap(z => [-18, -12, -6, 0, 6, 12, 18].map(x => ({ at: [x, 8.9, z] as XYZ, size: [.12, 17.6, .14] as XYZ, color: '#f4f1e9' }))),
@@ -63,17 +66,18 @@ const windowGrid: Instance[] = [
   ])),
 ]
 const roofGrid: Instance[] = [
-  ...[-12, -6, 0, 6, 12].map(x => ({ at: [x, 18.07, 0] as XYZ, size: [.14, .22, 26] as XYZ, color: '#faf8f3' })),
-  ...[-13, -6.5, 0, 6.5, 13].map(z => ({ at: [0, 18.07, z] as XYZ, size: [24, .22, .14] as XYZ, color: '#faf8f3' })),
+  ...Array.from({ length: 9 }, (_, i) => ({ at: [-12 + i * 3, 18.07, 0] as XYZ, size: [.14, .34, 26] as XYZ, color: '#22282c' })),
+  ...Array.from({ length: 10 }, (_, i) => ({ at: [0, 18.07, -13 + i * 2.89] as XYZ, size: [24, .34, .14] as XYZ, color: '#252b2f' })),
+  ...[-12, 0, 12].map(x => ({ at: [x, 17.83, 0] as XYZ, size: [.26, .5, 26] as XYZ, color: '#20272b' })),
 ]
 const roofEdge: Instance[] = [
   ...[-18.5, 18.5].map(z => ({ at: [0, 18.06, z] as XYZ, size: [44, .3, 7] as XYZ, color: '#e9eeea' })),
   ...[-17, 17].map(x => ({ at: [x, 18.06, 0] as XYZ, size: [10, .3, 30] as XYZ, color: '#e9eeea' })),
 ]
 const floorBands: Instance[] = [
-  ...[-18, 18].map(x => ({ at: [x, .012, 0] as XYZ, size: [.17, .022, 37] as XYZ, color: '#fdf3d6' })),
-  ...[-18, 18].map(z => ({ at: [0, .012, z] as XYZ, size: [37, .022, .17] as XYZ, color: '#fdf3d6' })),
-  ...[5, 10].flatMap(y => [-10.4, 10.4].map(z => ({ at: [0, y + .015, z] as XYZ, size: [18, .028, .12] as XYZ, color: '#f9f2df' }))),
+  ...[-18, -10, 10, 18].map(x => ({ at: [x, .012, 0] as XYZ, size: [.22, .022, 43] as XYZ, color: '#4e5356' })),
+  ...[-18, -10, 10, 18].map(z => ({ at: [0, .012, z] as XYZ, size: [43, .022, .22] as XYZ, color: '#4e5356' })),
+  { at: [0, .014, 14], size: [43, .025, .45], color: '#555a5c', rotation: [0, -.16, 0] },
 ]
 
 function Columns() {
@@ -92,26 +96,20 @@ function Columns() {
 
 function BalconyGlass() {
   return <>
-    {[5, 10].flatMap(y => [
-      ...[-10, 10].map(z => <mesh key={`${y}-z${z}`} position={[0, y + .59, z]} material={glassMaterial}><boxGeometry args={[18, 1.03, .035]} /></mesh>),
-      ...[-9, 9].map(x => <mesh key={`${y}-x${x}`} position={[x, y + .59, 0]} material={glassMaterial}><boxGeometry args={[.035, 1.03, 20]} /></mesh>),
-    ])}
+    {edges.map((e, i) => <mesh key={i} position={[e.at[0], e.at[1] + .55, e.at[2]]} scale={e.size} material={glassMaterial} geometry={beamGeometry} dispose={null} />)}
     <Instances items={railCaps} />
   </>
 }
 
 // Two opposing, visible white flights. Player transition tracks the very same
 // endpoints in STAIRS; the tread bodies and cheek beams sit inside world stair footprints.
-function Flight({ index }: { index: number }) {
-  const flight = STAIRS[index]
-  const { bottom, top } = flight
-  const dz = top.z - bottom.z, dy = (flight.to - flight.from) * 5
-  const low = (flight.from - 2) * 5
+function StairRun({ bottom, top }: { bottom: { x: number; z: number; y: number }; top: { x: number; z: number; y: number } }) {
+  const dz = top.z - bottom.z, dy = top.y - bottom.y, low = bottom.y
   const length = Math.hypot(dz, dy), angle = -Math.atan2(dy, dz)
   const centerZ = (bottom.z + top.z) / 2
-  const steps = useMemo<Instance[]>(() => Array.from({ length: 24 }, (_, i) => ({
-    at: [bottom.x, low + (i + .5) * dy / 24, bottom.z + (i + .5) * dz / 24] as XYZ,
-    size: [2.8, .18, Math.abs(dz) / 24 + .035] as XYZ, color: i % 2 ? '#f5f3ee' : '#ffffff',
+  const steps = useMemo<Instance[]>(() => Array.from({ length: 16 }, (_, i) => ({
+    at: [bottom.x, low + (i + .5) * dy / 16, bottom.z + (i + .5) * dz / 16] as XYZ,
+    size: [2.8, .16, Math.abs(dz) / 16 + .035] as XYZ, color: i % 2 ? '#e1e3e1' : '#f8f9f6',
   })), [bottom.x, bottom.z, dz, dy, low])
   const posts = useMemo<Instance[]>(() => [-1, 1].flatMap(side => Array.from({ length: 9 }, (_, i) => ({
     at: [bottom.x + side * 1.45, low + dy * i / 8 + .67, bottom.z + dz * i / 8] as XYZ,
@@ -129,15 +127,50 @@ function Flight({ index }: { index: number }) {
   </>
 }
 
+function Flight({ index }: { index: number }) {
+  const path = STAIR_PATHS[index]
+  return <>
+    <StairRun bottom={path[0]} top={path[1]} />
+    <StairRun bottom={path[2]} top={path[3]} />
+    {[1, 3].map(i => {
+      const a = path[i], b = path[i + 1], x = (a.x + b.x) / 2, z = (a.z + b.z) / 2
+      const width = Math.abs(a.x - b.x) + 2.8, depth = Math.abs(a.z - b.z) + 2.8, crosswise = a.x !== b.x
+      const guardX = crosswise ? x : x + (index === 0 ? -1.4 : 1.4)
+      const guardZ = crosswise ? z + (index === 0 ? -1.4 : 1.4) : z
+      return <group key={i}>
+        <Box at={[x, a.y - .12, z]} size={[width, .24, depth]} color="#f1f2ee" />
+        <Box at={[guardX, a.y + 1.12, guardZ]} size={[crosswise ? width : .065, .065, crosswise ? .065 : depth]} color="#a7afb3" />
+        <mesh position={[guardX, a.y + .58, guardZ]} scale={[crosswise ? width : .035, 1.05, crosswise ? .035 : depth]} material={glassMaterial} geometry={beamGeometry} dispose={null} />
+      </group>
+    })}
+  </>
+}
+
+function TimberScreens() {
+  const fins = useMemo<Instance[]>(() => Array.from({ length: 41 }, (_, i) => ({
+    at: [0, i * .29, 0], size: [9.6, .105, .32], color: ['#ae845b', '#bd976e', '#b58d62'][i % 3],
+  })), [])
+  return <>
+    {[[3.7, 4.4, -3.8, -.12], [-4.5, 4.9, .6, Math.PI / 2 + .08]].map(([x, y, z, angle], i) => <group key={i} position={[x, y, z]} rotation={[0, angle, 0]}>
+      <Instances items={fins} />
+      <Instances items={[-4.1, 4.1].map(dx => ({ at: [dx, 5.8, -.04], size: [.055, 11.7, .075], color: '#655c50' }))} />
+      <Instances items={[-4.1, 4.1].map(dx => ({ at: [dx, (18 - y + 11.6) / 2, 0], size: [.025, 18 - y - 11.6, .025], color: '#777b7a' }))} />
+    </group>)}
+  </>
+}
+
 function Architecture() {
   const terrazzo = useMemo(() => surfaceTexture('terrazzo', [11, 11]), [])
+  const carpet = useMemo(() => surfaceTexture('carpet', [7, 4]), [])
   const glass = useMemo(() => surfaceTexture('glass'), [])
   return <>
-    <Box at={[0, -.15, 0]} size={[ROOM.w, .3, ROOM.d]} color="#e9e5d8" map={terrazzo} />
+    <Box at={[0, -.15, 0]} size={[ROOM.w, .3, ROOM.d]} color="#e2e5e4" map={terrazzo} />
     <Instances items={slabs} />
+    {slabs.map((s, i) => <Box key={`carpet${i}`} at={[s.at[0], s.at[1] + .247, s.at[2]]} size={[s.size[0], .012, s.size[2]]} color="#c6c9c9" map={carpet} />)}
     <Instances items={fascia} />
     <GlowBands />
     <Columns />
+    <TimberScreens />
     {/* Campus skyline is painted into a lightweight, self-contained nighttime glazing texture. */}
     <mesh position={[0, 8.9, -21.98]}><planeGeometry args={[43.8, 17.8]} /><meshBasicMaterial map={glass} side={THREE.DoubleSide} /></mesh>
     <mesh position={[0, 8.9, 21.98]} rotation={[0, Math.PI, 0]}><planeGeometry args={[43.8, 17.8]} /><meshBasicMaterial map={glass} side={THREE.DoubleSide} /></mesh>
@@ -230,6 +263,7 @@ function GroundLandmarks() {
   const authorized = useGame(s => s.authorized)
   const fixtures: Instance[] = [
     { at: [-9, .57, 16], size: [5, 1.14, 1.08], color: '#f3eee5' },
+    { at: [-9, .55, 15.44], size: [5, .82, .05], color: '#ae2735' },
     { at: [-9, 1.1, 15.46], size: [5, .13, .12], color: '#ae2736' },
     { at: [-18.9, 1.1, ANCHORS.power.z], size: [.37, 2.13, 1.48], color: '#efece3' },
     { at: [-18.83, 1.06, ANCHORS.powerNotice.z], size: [.22, 2, 2.0], color: '#f5f0e6' },
@@ -251,25 +285,7 @@ function GroundLandmarks() {
   </>
 }
 
-function GlowBands() {
-  const ref = useRef<THREE.InstancedMesh>(null!)
-  const material = useMemo(() => new THREE.MeshBasicMaterial({ color: '#fff2d9', toneMapped: false }), [])
-  useLayoutEffect(() => {
-    const object = new THREE.Object3D()
-    floorBands.forEach(({ at, size }, i) => {
-      object.position.set(...at); object.scale.set(...size); object.updateMatrix()
-      ref.current.setMatrixAt(i, object.matrix)
-    })
-    ref.current.instanceMatrix.needsUpdate = true
-    ref.current.computeBoundingSphere()
-  }, [])
-  useFrame(() => {
-    const s = useGame.getState()
-    const dim = runtime.triggers.has('corridor-lights') && s.floor === 4 ? .82 : 1
-    material.color.set('#fff1d7').multiplyScalar((s.power ? 1 : .7) * dim)
-  })
-  return <instancedMesh ref={ref} args={[beamGeometry, material, floorBands.length]} dispose={null} />
-}
+function GlowBands() { return <Instances items={floorBands} /> }
 
 const ceilingStrips: Instance[] = [
   ...[-16, 16].flatMap(x => [-16, -6, 6, 16].map(z => ({ at: [x, 17.74, z] as XYZ, size: [.13, .03, 4.7] as XYZ, color: '#fff4e0' }))),
@@ -308,6 +324,7 @@ export const Library = memo(function Library() {
   return <>
     <Architecture />
     <Sofas />
+    <PublicInteriors floor={floor} />
     {floor === 2 && <GroundLandmarks />}
     <UpperFloors />
     <AtriumLights />

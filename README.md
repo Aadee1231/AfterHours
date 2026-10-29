@@ -25,7 +25,7 @@ From your existing AfterHours repository terminal, run these **one at a time**:
    ```
 2. Switch to Talley (creates the local branch if needed):
    ```sh
-   git switch devin/1793162932-talley-v3
+   git switch devin/1793242282-talley-photo-fidelity
    ```
 3. Install the exact dependencies:
    ```sh
@@ -93,6 +93,14 @@ Open http://127.0.0.1:4187 on that computer. `dist/` is fully static. Vite warns
 Automated tests cover floor bounds, the upper-floor atrium void, every interaction anchor's connectivity, 30,000 swept collision vectors, 1,000 reproducible seeds, all switch permutations and event venues, intro/onboarding, puzzle recovery/gating, cumulative phone-light exposure, full round-trip progression, actual ending phase, phone freeze/chase across all floors, collision-aware pursuit, safe stair arrivals, grace/contact/death, both checkpoints, pause/reset, timed hints, Story speed, zero-volume persistence, solution hiding, and 1/5/15/30/60 FPS simulation. Unit tests are not evidence of pointer lock, visuals, hardware FPS, speaker output, or blind-player duration. UI verification is reported separately.
 
 ## Rendering and architecture
+
+### Photo-informed architecture review
+
+The atrium now has unequal balcony openings on Floors 3 and 4, a third **non-playable** upper overlook, a dark skylight lattice and two suspended installations built from individually spaced horizontal timber fins. Two-flight U-return stairs and their landings share `STAIR_PATHS` with the animated camera; arrival anchors and the phone map follow the new geometry. Floor 2 includes six additional wood booths, service/queue details and dark dining soffits. Upper public areas include a red paneled State Ballroom exterior, Stewart Theatre signage, study furniture, glass rooms and numbered columns. These are compact stylized interpretations, not measured building plans.
+
+For a controlled **development-only** lighting review, start Vite and add `?lighting=reference` to its address. A visible review label distinguishes this from story lighting. Both use identical architectural geometry. The parameter has no effect in a production build. Story lighting remains readable and dims with progression. No story, monster or puzzle rules were replaced.
+
+See [visual-gap-analysis.md](visual-gap-analysis.md) for the original gaps and [visual-comparison.md](visual-comparison.md) for camera evidence and remaining deviations. All 38 supplied originals were reviewed outside the checkout. The private package is ignored, never imported or copied into `src`, `public` or `dist`.
 
 ### Browser verification
 

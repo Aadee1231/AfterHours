@@ -49,7 +49,7 @@ function Furniture({ floor }: { floor: UpperFloor }) {
   const pieces = useMemo(() => {
     const sofa = OBSTACLES[floor].find(o => o.kind === 'sofa')!
     const table = OBSTACLES[floor].find(o => o.kind === 'desk')!
-    const side = Math.sign(sofa.x), fabric = floor === 3 ? rust : '#756a83'
+    const side = Math.sign(sofa.x), fabric = floor === 3 ? '#b52f3e' : '#444b4d'
     const items: Instance[] = [
       part([sofa.x, .19, sofa.z], [sofa.w, .29, sofa.d], '#4c5049'),
       part([sofa.x + side * (sofa.w / 2 - .18), .68, sofa.z], [.36, .84, sofa.d], fabric),
@@ -80,19 +80,19 @@ function Furniture({ floor }: { floor: UpperFloor }) {
 /** Millimetre-thin rugs; no duplicate slabs or surfaces across stair holes. */
 function FloorFinishes({ floor }: { floor: UpperFloor }) {
   const items = useMemo(() => {
-    const warm = floor === 3, base = warm ? '#736f5e' : '#747e87', accent = warm ? gold : purple
+    const warm = floor === 3, base = warm ? '#656a6e' : '#626a70', accent = '#a72d3c'
     const result = [
       part([0, .009, -16.4], [39.5, .012, 4.6], base),
-      part([0, .009, 16.3], [39.5, .012, 4.7], warm ? '#817566' : '#7c8287'),
+      part([0, .009, 16.3], [39.5, .012, 4.7], warm ? '#707476' : '#697176'),
       part([-19.45, .009, 0], [3, .012, 27], base),
       part([19.45, .009, 0], [3, .012, 27], base),
-      part([0, .017, -18.55], [39.5, .008, .08], accent),
-      part([0, .017, 18.5], [39.5, .008, .08], accent),
+      part([0, .017, -18.55], [39.5, .008, .48], accent),
+      part([0, .017, 18.5], [39.5, .008, .48], accent),
     ]
     for (const x of [-19.9, -19.5, -19.1, 19.1, 19.5, 19.9])
       result.push(part([x, .017, 0], [.045, .008, 25.5], accent))
     for (let x = -18; x <= 18; x += 3)
-      result.push(part([x, .018, 16.3], [.12, .008, 4.2], warm ? '#985f49' : '#89929a'))
+      result.push(part([x, .018, 16.3], [.12, .008, 4.2], warm ? '#9a3440' : '#89929a'))
     return result
   }, [floor])
   return <Instances items={items} />
@@ -236,7 +236,7 @@ function CorridorLamps({ floor }: { floor: UpperFloor }) {
 function LoungeFloor() {
   return <>
     <FloorFinishes floor={3} /><Furniture floor={3} />
-    <ClosedDoors at={[-21.94, 0, 3.7]} rotation={[0, Math.PI / 2, 0]} label="STATE BALLROOM" small="TALLEY · FLOOR 3 / CLOSED AFTER HOURS" ballroom />
+    <ClosedDoors at={[-20.29, 0, 3.7]} rotation={[0, Math.PI / 2, 0]} label="STATE BALLROOM" small="TALLEY · FLOOR 3 / CLOSED AFTER HOURS" ballroom />
     <ClosedDoors at={[7, 0, -21.94]} label="BALLROOM EVENT SUITE" small="EVENT SUPPORT / CLOSED" />
     <Noticeboard at={[21.91, 1.9, 12.5]} rotation={[0, -Math.PI / 2, 0]} title="SOUTH LOUNGE" notice="PLEASE LEAVE THE ATRIUM WALKWAY CLEAR" />
     <Noticeboard at={[-6.5, 1.9, -21.91]} title="TONIGHT IN TALLEY" notice="NIGHT OWL · SEE UV EVENT BOARD IN NORTH LOUNGE" />

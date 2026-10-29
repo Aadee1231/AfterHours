@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ANCHORS, FLOOR_NAMES, FLOORS, ROOM, type Floor } from '../game/world'
+import { ANCHORS, ATRIUM_OPENINGS, BOOTHS, FLOOR_NAMES, FLOORS, ROOM, STUDY_PODS, type Floor } from '../game/world'
 import { act, contextualHint, currentLandmark, hintLevel, messages, objective, runtime, useGame, type PhoneTab } from '../game/store'
 
 const landmarks = {
@@ -24,6 +24,7 @@ export function FloorMap({ large = false }: { large?: boolean }) {
   useEffect(() => setFloor(s.floor), [s.floor])
   const selected: Floor = s.discovered.includes(floor) ? floor : s.floor
   const target = currentLandmark(s)
+  const opening = selected === 2 ? null : ATRIUM_OPENINGS[selected]
   return <div className={`map-frame ${large ? 'large' : ''}`}>
     <div className="map-compass">N ↑ <span>FLOOR {selected} · {FLOOR_NAMES[selected]}</span> ↓ S</div>
     <nav className="map-floor-selector" aria-label="Discovered floors">{FLOORS.filter(f => s.discovered.includes(f)).map(f => <button type="button" key={f} className={selected === f ? 'selected' : ''} aria-pressed={selected === f} onClick={() => setFloor(f)}>FLOOR {f}</button>)}</nav>
@@ -36,13 +37,15 @@ export function FloorMap({ large = false }: { large?: boolean }) {
         <text x="0" y="-16" textAnchor="middle" className="map-small">DINING COUNTERS</text>
         <text x="0" y="19" textAnchor="middle" className="map-small">MAIN DOORS</text>
         <circle cx="-6" cy="3" r="2.5" fill="#963d36" /><circle cx="6" cy="-5" r="2.5" fill="#963d36" />
+        {BOOTHS.map((p, i) => <rect key={i} x={p.x - 1.6} y={p.z - 1.4} width="3.2" height="2.8" fill="#8a6d4c" />)}
       </> : <>
-        <rect x="-9" y="-10" width="18" height="20" fill="#101a15" stroke="#afd0b9" strokeWidth=".65" />
+        <rect x={opening!.x1} y={opening!.z1} width={opening!.x2 - opening!.x1} height={opening!.z2 - opening!.z1} fill="#101a15" stroke="#afd0b9" strokeWidth=".65" />
+        {STUDY_PODS[selected].map((p, i) => <rect key={i} x={p.x - 1.6} y={p.z - 1.4} width="3.2" height="2.8" fill="#5c6e69" />)}
         <text x="0" y="-1" textAnchor="middle" className="map-zone">OPEN TO</text><text x="0" y="2" textAnchor="middle" className="map-zone">ATRIUM BELOW</text>
         <text x="0" y="-16" textAnchor="middle" className="map-small">{selected === 3 ? 'BALLROOM CORRIDOR' : 'STUDENT ORGANIZATIONS'}</text>
       </>}
-      {(selected === 2 || selected === 3) && <g><path d="M14.3 -3h3.4v14h-3.4z" fill="#576c56" stroke="#d2dbc5" strokeWidth=".35" /><circle cx="16" cy={selected === 2 ? 12 : -4} r="1.1" fill="#d8c293" /><text x="16" y={selected === 2 ? 16 : -7} textAnchor="middle" className="map-stair">STAIRS {selected === 2 ? '↑ 3' : '↓ 2'}</text></g>}
-      {(selected === 3 || selected === 4) && <g><path d="M-17.7 -11h3.4V3h-3.4z" fill="#576c56" stroke="#d2dbc5" strokeWidth=".35" /><circle cx="-16" cy={selected === 3 ? -12 : 4} r="1.1" fill="#d8c293" /><text x="-16" y={selected === 3 ? -15 : 8} textAnchor="middle" className="map-stair">STAIRS {selected === 3 ? '↑ 4' : '↓ 3'}</text></g>}
+      {(selected === 2 || selected === 3) && <g><path d="M16 12V4h-4v8" fill="none" stroke="#d2dbc5" strokeWidth="1.5" /><circle cx={selected === 2 ? ANCHORS.up2.x : ANCHORS.down3.x} cy="12" r="1.1" fill="#d8c293" /><text x="14" y="14.9" textAnchor="middle" className="map-stair">STAIRS {selected === 2 ? '↑ 3' : '↓ 2'}</text></g>}
+      {(selected === 3 || selected === 4) && <g><path d="M-16 -12V-4h4v-8" fill="none" stroke="#d2dbc5" strokeWidth="1.5" /><circle cx={selected === 3 ? ANCHORS.up3.x : ANCHORS.down4.x} cy="-12" r="1.1" fill="#d8c293" /><text x="-14" y="-14.7" textAnchor="middle" className="map-stair">STAIRS {selected === 3 ? '↑ 4' : '↓ 3'}</text></g>}
       {landmarks[selected].filter(item => item.known(s)).map(({ label, point }) => <g key={label}><circle cx={point.x} cy={point.z} r=".85" fill="#e0b383" stroke="#1a271b" strokeWidth=".3" /><text x={point.x} y={point.z - 1.7} className="map-landmark" textAnchor="middle">{label}</text></g>)}
       {target?.floor === selected && <circle cx={target.point.x} cy={target.point.z} r="1.7" fill="none" stroke="#f4d394" strokeWidth=".55" />}
       {selected === s.floor && <g><circle cx={runtime.player.x} cy={runtime.player.z} r="1.1" fill="#daf8d2" stroke="#122019" strokeWidth=".4" /><path d={`M${runtime.player.x} ${runtime.player.z}l${runtime.direction.x * 2.8} ${runtime.direction.z * 2.8}`} stroke="#e6ffe0" strokeWidth=".65" /></g>}

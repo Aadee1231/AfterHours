@@ -22,4 +22,6 @@ Important correction: the primary photos show two screens sharing the same gener
 
 ## Review captures
 
-To be filled with actual capture metadata, performance and self-review after browser validation. Reference photos/comparison boards remain private and outside source/public/build assets.
+First fixture review (`ff90326`) was rejected internally. Open screen fins and the connected stair stack improved, but broad floor undersides still flattened the background. Ray inspection identified the nonplayable overlook underside at y=14.68 and Floor 4 underside at y=9.68, not a vertical wall. Native SwiftShader samples were 22.29 FPS hero / 23.92 FPS stair (10 seconds, DPR .462, 473×354 buffer). This was not gameplay validation.
+
+Correction: join the stair opening to the central void rather than leaving a slab strip across the stair silhouette; set the south edge back to z=9/13/16 across the three tiers; move the hero closer to the screens and view the stair from its opposite side. The hero is inferred from IMG_1042; camera estimates are not survey measurements. Final captures and verification below must supersede those preliminary fixtures. Reference photos/comparison boards remain private and outside source/public/build assets.

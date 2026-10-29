@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { Instances, Sign, type Instance, type XYZ } from './primitives'
-import { ATRIUM_BOUNDARIES, COLUMNS, STAIR_PATHS, STAIR_WELL, type Point, type StairPoint } from './world'
+import { ATRIUM_BOUNDARIES, COLUMNS, STAIR_PATHS, type Point, type StairPoint } from './world'
 import { surfaceTexture } from './textures'
 
 const cube = new THREE.BoxGeometry(1, 1, 1)
@@ -22,8 +22,6 @@ function floorGeometry(level: 3 | 4 | 5) {
     path.closePath(); shape.holes.push(path)
   }
   cut(ATRIUM_BOUNDARIES[level])
-  cut([{ x: STAIR_WELL.x1, z: STAIR_WELL.z1 }, { x: STAIR_WELL.x2, z: STAIR_WELL.z1 },
-    { x: STAIR_WELL.x2, z: STAIR_WELL.z2 }, { x: STAIR_WELL.x1, z: STAIR_WELL.z2 }])
   const geometry = new THREE.ExtrudeGeometry(shape, { depth: .32, bevelEnabled: false })
   geometry.rotateX(-Math.PI / 2)
   return geometry
@@ -113,7 +111,7 @@ function StairBank() {
 }
 
 function Screens() {
-  const assemblies = [{ x: 3.1, bottom: 4.75, width: 4.55 }, { x: -4.3, bottom: 8.15, width: 5.05 }]
+  const assemblies = [{ x: 3.1, bottom: 4.75, width: 5.1 }, { x: -4.3, bottom: 8.15, width: 5.5 }]
   return <>{assemblies.map(({ x, bottom, width }, index) => {
     const top = 17.05, spacing = .29, count = Math.floor((top - bottom) / spacing)
     const fins = Array.from({ length: count }, (_, i) => part([0, bottom + i * spacing, 0], [width, .052, .26], ['#97754f', '#ab8659', '#bc996a', '#a48158'][i % 4]))
@@ -132,10 +130,10 @@ function Screens() {
 function Roof() {
   const steel = '#303b3d', thin = '#485351'
   const primary = [-10.5, -3.5, 3.5, 10.5].flatMap(x => [
-    part([x, 18.15, 0], [.19, .7, 27], steel), part([x, 17.79, 0], [.34, .045, 27], thin),
+    part([x, 18.15, 0], [.19, .7, 27], steel), part([x, 17.79, 0], [.44, .065, 27], '#263033'),
     ...[-12, -6, 0, 6, 12].map(z => line([x, 17.81, z], [x + 6.7, 18.47, z + (z >= 0 ? -5.5 : 5.5)], .055, thin)),
   ])
-  const secondary = Array.from({ length: 15 }, (_, i) => part([0, 18.4, -13 + i * 1.85], [25.5, .12, .065], thin))
+  const secondary = Array.from({ length: 15 }, (_, i) => part([0, 18.34, -13 + i * 1.85], [25.5, .25, .10], thin))
   const glazing = Array.from({ length: 7 }, (_, i) => part([-11 + i * 3.65, 18.55, 0], [3.58, .04, 26.6], i % 2 ? '#202e33' : '#28363a'))
   const rim = [part([0, 18.15, -18], [44, .45, 9], '#c8cfca'), part([0, 18.15, 18], [44, .45, 9], '#c8cfca'),
     part([-17.2, 18.15, 0], [9.5, .45, 27], '#d7dcd5'), part([17.2, 18.15, 0], [9.5, .45, 27], '#d7dcd5')]

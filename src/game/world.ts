@@ -43,13 +43,13 @@ export function stairPosition(from: Floor, to: Floor, progress: number): StairPo
   return path[0]
 }
 export const ATRIUM_OPENINGS: Record<3 | 4, { x1: number; x2: number; z1: number; z2: number }> = {
-  3: { x1: -9, x2: 11, z1: -10, z2: 12 },
-  4: { x1: -7.2, x2: 11, z1: -10, z2: 9 },
+  3: { x1: -9, x2: 16, z1: -10, z2: 12 },
+  4: { x1: -7.2, x2: 16, z1: -10, z2: 13 },
 }
 export const ATRIUM_BOUNDARIES: Record<3 | 4 | 5, Point[]> = {
-  3: [{ x: -9, z: -10 }, { x: 8, z: -10 }, { x: 8, z: -7 }, { x: 11, z: -7 }, { x: 11, z: 9 }, { x: -6, z: 9 }, { x: -6, z: 12 }, { x: -9, z: 12 }],
-  4: [{ x: -7.2, z: -10 }, { x: 11, z: -10 }, { x: 11, z: 6 }, { x: 8, z: 6 }, { x: 8, z: 9 }, { x: -7.2, z: 9 }],
-  5: [{ x: -9, z: -8 }, { x: 9, z: -8 }, { x: 9, z: 10 }, { x: -5, z: 10 }, { x: -5, z: 6 }, { x: -9, z: 6 }],
+  3: [{ x: -9, z: -10 }, { x: 8, z: -10 }, { x: 8, z: -8.5 }, { x: 16, z: -8.5 }, { x: 16, z: 8.5 }, { x: 11, z: 8.5 }, { x: 11, z: 9 }, { x: -6, z: 9 }, { x: -6, z: 12 }, { x: -9, z: 12 }],
+  4: [{ x: -7.2, z: -10 }, { x: 11, z: -10 }, { x: 11, z: -8.5 }, { x: 16, z: -8.5 }, { x: 16, z: 8.5 }, { x: 8, z: 8.5 }, { x: 8, z: 13 }, { x: -7.2, z: 13 }],
+  5: [{ x: -9, z: -8.5 }, { x: 16, z: -8.5 }, { x: 16, z: 12 }, { x: 8, z: 12 }, { x: 8, z: 16 }, { x: -5, z: 16 }, { x: -5, z: 11 }, { x: -9, z: 11 }],
 }
 export function insideAtrium(x: number, z: number, floor: 3 | 4 | 5) {
   const polygon = ATRIUM_BOUNDARIES[floor]

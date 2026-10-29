@@ -3,8 +3,8 @@ import * as THREE from 'three'
 
 // Inferred public-photo compositions, never a measured building/security plan.
 export const ATRIUM_CAMERAS = {
-  hero: { photo: 'IMG_1042.JPG', at: [-7, 1.67, -9], target: [3.5, 8.2, 7], fov: 84 },
-  stair: { photo: 'IMG_1047.JPG', at: [-2, 1.67, 1], target: [14, 8.2, 1], fov: 83 },
+  hero: { photo: 'IMG_1042.JPG', at: [6, 1.67, -6], target: [-1.5, 8.9, 8.4], fov: 84 },
+  stair: { photo: 'IMG_1047.JPG', at: [20, 1.67, -.5], target: [14, 7.5, 0], fov: 100 },
   landing: { photo: 'IMG_1055.JPG', at: [9.5, 6.67, -10], target: [-.5, 9, 8.4], fov: 78 },
 } satisfies Record<string, { photo: string; at: number[]; target: number[]; fov: number }>
 

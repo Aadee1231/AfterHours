@@ -45,3 +45,37 @@ The stair-side void is now x=20.8, exposing the entire bank from the east. Upper
 | Landing | IMG_1055 | (9.5,6.67,-10) | (-.5,9,8.4) | 78° |
 
 Both lighting modes use the same geometry and transforms. Reference lighting is a development-only inspection aid, not the shipped horror exposure. All camera fixtures are development-only. Diagnostic high-DPR stills must not be described as native gameplay resolution or performance.
+
+## Final review — a7500bc runtime
+
+Six development captures cover hero/stair/landing in reference and actual game lighting. All three diagnostic pairs match camera, FOV, DPR1, 1024×768 buffer and normalized mesh signatures. These are inspection stills, not native-resolution gameplay. Separate native captures and exact JSON metadata accompany the private owner review. Native landing quality differed between modes; use its matched DPR1 pair for geometry comparison. Fixture signatures are not full vertex-buffer hashes or complete game-state snapshots.
+
+Private three-column boards compare IMG_1042/1047/1055 with the corresponding reference/game-lighting stills, without cropping or warping the originals. They are delivered only in the owner session, not committed or uploaded to the PR. The hero is approximately photo-inspired; the landing is contextual, not a close camera match.
+
+### Physical production verification
+
+A fresh Standard run began at the real title/full intro, Floor 2 (4,15), all major progression false and checkpoint0. Actual WASD/mouse/E/Q/phone UI inputs completed entrance → directory/notice → power → Floor3 board/badge → Floor4 release → both descents → original doors and visible victory. No position/progression injection. Entrance interaction took approximately44 seconds for an informed tester; unfamiliar-player navigation remains unverified. Victory displayed11:50 including deliberate deaths, retries and inspections, not blind-play pacing.
+
+Earned checkpoint1/2 deaths and retries, wrong release order, nonrefreshing release grace deadline, phone-open approach/closed freeze, pointer-lock recovery, pause/resume/replay/restart and flashlight board exposure passed. Sampled Floor3 glazing blocked movement while doorways at x=0/6 and the stairs remained traversable; the sampled void boundary stopped movement. This is not exhaustive collision coverage. No captured production exceptions, failed requests or HTTP errors during the observed interval.
+
+28 tests, TypeScript, ESLint, production build and diff check pass. The existing Three.js bundle-size warning remains.
+
+### Native software rendering — ten-second samples
+
+| View | FPS | p95 interval | Draw calls / triangles | DPR / drawing buffer |
+| --- | --- | --- | --- | --- |
+| Hero fixture | 25.56 | 50.1ms | 226 / 45,446 | .46219 / 473×354 |
+| Stair fixture | 23.58 | 66.7ms | 226 / 45,406 | .46219 / 473×354 |
+| Earned production Floor4 | 19.93 | 83.4ms | 232 / 44,372 | .45 / 576×378 |
+
+ANGLE/SwiftShader software-low only. These samples remain below30FPS and do not establish hardware-GPU performance. The production view differs from the fixed cameras; it is not a controlled before/after optimization benchmark.
+
+### Remaining visual differences / owner decision
+
+- The major connected stair bank, unequal suspended screens, cylindrical columns and layered gallery openings now read together, but proportions, bay spacing and material response remain approximate, not a measured/photo-exact replica.
+- Stair landings and endpoints remain partly cropped in the low-angle fixture; undersides still dominate more than in IMG_1047. The landing fixture differs substantially in orientation and facade placement from IMG_1055.
+- Floor sheen, fine screen/rail hardware, glazing reflections and surrounding furnishing density remain simplified. Main-floor spacing is still more open than the photographs. No later-area rebuild was attempted.
+- Floor3 phone-map stair labels are crowded, and the Floor4 down-stair sign partly overlaps EXIT RELEASE. Neither blocked the verified escape.
+- Hardware GPU, hidden-tab behavior, speaker mix, blind-human onboarding and independently timed opening-lesson safety remain unverified.
+
+Gate A is presented for owner visual review, not declared visually approved. No later environment gate, merge or deployment is authorized by these test results. Hill remains preserved on archive/hill-v2 and hill-v2.

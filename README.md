@@ -1,0 +1,156 @@
+# AFTER HOURS — Talley Student Union
+
+**2:13 AM. The union is empty. You’re not alone.** A complete-route first-person psychological horror game in Vite, React, TypeScript, Three.js, React Three Fiber, and Zustand. The Talley edition reuses the Hill game's controller, phone, UI, audio engine, and state-machine architecture; it is not a new project.
+
+**PHONE OPEN = IT APPROACHES. PHONE CLOSED = IT STOPS.** Short glances are safer. A frozen figure is still dangerous if you walk into it. The first balcony encounter cannot kill you; later chapters have safe arrivals, contact-duration catches, and a brief recovery window after closing the phone.
+
+Unofficial fiction, no university affiliation or official logos. The compact layout, event names, lockdown, badge system and emergency controls are invented—not actual building plans or real safety guidance.
+
+## Two preserved editions
+
+- **Talley V3:** `devin/1793162932-talley-v3` — Floors 2–4, atrium, lounges, ballroom corridor and student organizations.
+- **Hill V2:** [archive/hill-v2](https://github.com/Aadee1231/AfterHours/tree/archive/hill-v2), also tagged [hill-v2](https://github.com/Aadee1231/AfterHours/tree/hill-v2). The previous library game and its tests remain intact in Git. There is no in-game map selector.
+
+Do not switch editions with unsaved work. Commit/stash your own changes first. Use separate clones if you want to keep both running. Neither edition is automatically merged or deployed by these instructions.
+
+## Play locally
+
+Requires **Node.js 22.12+ or Node 24 LTS**, npm, and a hardware-accelerated desktop browser with a keyboard and mouse. No backend, environment variables, API keys, accounts, downloaded assets, or paid services are needed.
+
+From your existing AfterHours repository terminal, run these **one at a time**:
+
+1. Fetch the published branches:
+   ```sh
+   git fetch origin
+   ```
+2. Switch to Talley (creates the local branch if needed):
+   ```sh
+   git switch devin/1793242282-talley-photo-fidelity
+   ```
+3. Install the exact dependencies:
+   ```sh
+   npm ci
+   ```
+4. Start on a dedicated port, avoiding another site's localhost server:
+   ```sh
+   npm run dev -- --port 5187 --strictPort
+   ```
+5. Open **http://127.0.0.1:5187** on the same computer. Click **ENTER TALLEY**. The 24-second intro is skippable. Click the game to capture the mouse when prompted. The first objective is **Try the main entrance**.
+
+If you have not cloned the project, first run `git clone https://github.com/Aadee1231/AfterHours.git`, then `cd AfterHours`, before the numbered steps. If your local Talley branch already exists after a later update, run `git pull --ff-only` after switching to it.
+
+To revisit Hill, stop the server, run `git switch archive/hill-v2`, then repeat the dependency/start steps. A local branch will track the preserved remote branch; the `hill-v2` tag remains an additional immutable reference.
+
+## Controls
+
+| Input | Action |
+| --- | --- |
+| WASD / up-down arrows | Walk |
+| Mouse | Look |
+| Shift | Sprint |
+| E | Interact with the nearby marked object / take a stair |
+| Q | Open/close phone; close puzzle panel |
+| Tab | Cycle phone Messages / Map / Objectives |
+| X | Use phone mouse controls / return to looking |
+| F | Phone flashlight on/off |
+| ? | Toggle extra contextual guidance |
+| Esc | Pause / release mouse; close puzzle panel first |
+| H | Capture mode: hide nonessential HUD and captions |
+
+Puzzle choices use labeled mouse buttons, not numeric keypad shortcuts. The phone is active during puzzle panels: the threat keeps moving. Close the panel/phone with Q or Esc to freeze it. X releases the cursor for phone controls without pausing danger. Closing a panel attempts mouse recapture; a click-to-look fallback appears if the browser denies it.
+
+Title and pause menus include volume/mute, reduced flashing, Story/Standard difficulty, Low/High graphics, help, and fullscreen. Story mode slows pursuit and offers earlier hints. Standard is the default. Changing tabs or losing window focus pauses normal gameplay; resume by clicking. Volume, mute, reduced flashing, graphics, attempts and Talley best time use local storage. Saving is optional: restricted/private browsing does not block play.
+
+## The route — no obscure code
+
+1. **The Empty Atrium / Floor 2:** try the entrance, find the information desk, read the posted service order, restore backup power. Learn the phone rule with a safe balcony watcher. Chapter checkpoint saved.
+2. **Someone’s Still Here / Floor 3:** ascend the visible east white stair. Phone light develops the faded ballroom event-board venue; short glances preserve exposure. Recover the matching event's override badge. Chapter checkpoint saved.
+3. **The Last Announcement / Floor 4:** ascend the west white stair, scan the badge, arm the doors, and release the main entrance. The first terminal connection gives a visible, non-renewable 20-second reading buffer: it can approach, but cannot catch you until the timer ends. Descend through Floor 3 to Floor 2 and use the original main doors for the escape cinematic.
+
+One primary objective stays visible. After 50 seconds without progress, a subtle hint appears; after 95 seconds, guidance becomes explicit. Instructions and discovered information are saved in Messages. The map shows visited floors, landmarks and the player, never the entity. Visible 2.8-second stair animations show actual elevation changes and announce the destination; they are not silently swapped rooms. New-floor placements stay at least 15 metres away with at least 12 seconds' grace. Normal pursuit cannot change floors or cross the atrium void.
+
+Death retries the last completed chapter with the same seeded event venue and switch arrangement; a new run creates a new seed. Checkpoints are in-memory for the current session, not disk saves. Restarting clears the entire route. Escape updates a separate Talley personal best. The first-player design target is **10–15 minutes**, not a measured guarantee or forced minimum; familiar players may finish faster. No long waits or repetitive tasks are added solely to pad duration.
+
+## Build / checks
+
+Run each separately:
+
+```sh
+npm run typecheck
+npm run lint
+npm test
+npm run build
+```
+
+To preview the production output after building:
+
+```sh
+npm run preview -- --port 4187 --strictPort
+```
+
+Open http://127.0.0.1:4187 on that computer. `dist/` is fully static. Vite warns about the roughly 1.1 MB minified Three.js/rendering chunk (about 300 KB gzip); that warning is not a build failure.
+
+Automated tests cover floor bounds, the upper-floor atrium void, every interaction anchor's connectivity, 30,000 swept collision vectors, 1,000 reproducible seeds, all switch permutations and event venues, intro/onboarding, puzzle recovery/gating, cumulative phone-light exposure, full round-trip progression, actual ending phase, phone freeze/chase across all floors, collision-aware pursuit, safe stair arrivals, grace/contact/death, both checkpoints, pause/reset, timed hints, Story speed, zero-volume persistence, solution hiding, and 1/5/15/30/60 FPS simulation. Unit tests are not evidence of pointer lock, visuals, hardware FPS, speaker output, or blind-player duration. UI verification is reported separately.
+
+## Rendering and architecture
+
+### Photo-informed architecture review
+
+The atrium now has unequal balcony openings on Floors 3 and 4, a third **non-playable** upper overlook, a dark skylight lattice and two suspended installations built from individually spaced horizontal timber fins. Two-flight U-return stairs and their landings share `STAIR_PATHS` with the animated camera; arrival anchors and the phone map follow the new geometry. Floor 2 includes six additional wood booths, service/queue details and dark dining soffits. Upper public areas include a red paneled State Ballroom exterior, Stewart Theatre signage, study furniture, glass rooms and numbered columns. These are compact stylized interpretations, not measured building plans.
+
+For a controlled **development-only** lighting review, start Vite and add `?lighting=reference` to its address. A visible review label distinguishes this from story lighting. Both use identical architectural geometry. The parameter has no effect in a production build. Story lighting remains readable and dims with progression. No story, monster or puzzle rules were replaced.
+
+See [visual-gap-analysis.md](visual-gap-analysis.md) for the original gaps and [visual-comparison.md](visual-comparison.md) for camera evidence and remaining deviations. All 38 supplied originals were reviewed outside the checkout. The private package is ignored, never imported or copied into `src`, `public` or `dist`.
+
+### Photo-rebuild browser verification
+
+The architecture revision has **26 passing automated tests**, plus clean TypeScript, ESLint, production build, diff check and production dependency audit. All six A–F camera checkpoints have matched neutral/story screenshots. [Visual comparison](visual-comparison.md) records the cameras, actual screenshots, deviations and revision-specific coverage; private originals are delivered separately, never published here.
+
+The full physical production route passed on **dff57a56**, including both U-stair ascents/descents, board exposure, badge/release, checkpoint1 retry and genuine escape. Victory was 07:27 game time / about14m02s wall time, attempt03, including one deliberate and one unintended badge-panel catch. This is not a slow-reader or blind-player pacing guarantee. The following **5c927ea** changed only sign alpha/header layout and off-floor decorative mounting; its six camera pairs and fresh-production phone/panel/movement smoke passed, but the full route was not repeated. Colliders, anchors and gameplay code were unchanged in that follow-up.
+
+**Remaining performance issue:** native software-low SwiftShader measured F2 34.29FPS, F3 25.26 and F4 16.25 over10-second production samples at DPR0.45/576×378. The final same-camera F4 development fixture measured16.84FPS with181calls rather than203; this is not a strict same-state benchmark. Floor4 remains visibly stuttery on this VM. Hardware GPU, real speakers, hidden-tab behavior and detailed checkpoint2/buffer-matrix regression on the architecture revision remain unverified. Photo-exact fidelity is not claimed.
+
+### Earlier Talley browser verification — historical, before the photo rebuild
+
+Production-preview testing used actual keyboard/mouse inputs, with no injected progress or teleportation. Independent fresh onboarding, the full 24-second intro, a genuine three-floor escape, wrong puzzle choices, both earned checkpoint retries, phone/focus recovery, pause/restart/replay, void blocking and visible death/escape sequences passed on the initial Talley gameplay revision. The subsequent reading-buffer revision was separately played from a fresh start through an earned badge, intentional post-expiry catch/retry, and genuine escape; no additional unintended terminal death occurred.
+
+Latest assisted clear: **05:00 game time**, approximately **8:15 wall time**, including intro, inspections and an intentional catch. The earlier full regression run was **08:15 game time / approximately 13:30 wall time**. Checkpoint retries rewind game time; neither result proves the 10–15-minute blind-player target. The buffer visibly counted down, did not renew after wrong choices or reopening, froze pursuit on Q without pausing the deadline, and allowed a real catch after expiry.
+
+Short SwiftShader samples on the initial Talley build were approximately **45–47 FPS on Floor 2, 56 FPS on Floor 3 and 50 FPS on Floor 4**, at DPR **0.45** and a **576×378** drawing buffer. Rendering was visibly pixelated; these are not sustained benchmarks or hardware-GPU measurements. Both runs captured zero exceptions, console errors or failed requests. Three.js Clock deprecation and software-WebGL warnings remain. WebAudio graph activity was confirmed, not actual speaker-output quality. Story/High settings and post-consumption new-run buffer reset were not separately browser-tested; checkpoint-retry buffer reset was.
+
+- `src/game/world.ts`: fictional floor elevations, anchors, authoritative collider arrays, seeded puzzles and per-floor routing.
+- `src/game/store.ts`: intro / play / stairs / death / escape state machine, progression, checkpoint retry, hints, phone rule and persistence.
+- `src/game/Scene.tsx`: actual pointer lock, movement, animated stairs, intro/exit cameras, humanoid animation, adaptive DPR and flashlight.
+- `src/game/Library.tsx`: retained environment entry point, now Talley's shared atrium shell, white stairs, columns, glass balconies, skylight, red curved seating and dining.
+- `src/game/UpperFloors.tsx`: only the current upper floor's lounge/ballroom or organization details, overhead event board and control station, sequential corridor-light fades.
+- `src/game/primitives.tsx`: shared geometry/materials, instanced props and procedural signs.
+- `src/game/audio.ts`: original procedural PA chimes/radio-like tones, atmosphere, spatial proximity, surface-aware footsteps and synthesized scare cues. Narrative PA text is captioned/saved; no recorded voice track.
+- `src/components/`: phone, map, objective log, and live-threat puzzle panels.
+
+Furniture/structure is instanced where useful; geometry and Lambert/basic materials are shared. The lightweight atrium remains visible while upper-floor detail is conditionally mounted. There are at most two pooled point lights (one on Low), a phone spotlight, no real-time shadows, no MSAA, and an adaptive pixel budget. SwiftShader uses a lower budget automatically. Low/High preserve readable HTML overlays independently of 3D resolution. Hardware acceleration is strongly recommended; **30+ FPS on a typical laptop is a target, not a verified claim**.
+
+## Research / interpretation
+
+Consulted before modeling:
+
+- [NC State Talley maps](https://studentcenters.ncsu.edu/maps/talley/): public floor functions and wayfinding.
+- [NC State Talley location](https://studentcenters.ncsu.edu/location/talley/): dining, meeting venues, student spaces and public architecture.
+- [Precision Walls project](https://precisionwalls.com/project/talley-student-union/): specialty glass, skylight, columns and acoustic finishes.
+- [Cooper Carry project](https://www.coopercarry.com/projects/talley-student-union-north-carolina-state-university/): reference supplied, but HTTP 403 prevented verification; not used to substantiate details.
+
+The visual interpretation emphasizes the multi-story atrium, white stairs and columns, glass balcony rails, red curved couches, tall glazing, skylight, dining and campus-inspired signs. It is a compact authored interpretation, not a measured recreation. No reference photos are shipped as game assets.
+
+## Vercel-ready, not automatically deployed
+
+Import the GitHub repository in Vercel and select the Talley branch. Framework: **Vite**. Install: `npm ci`. Build: `npm run build`. Output: `dist`. Node: **22.x or 24.x**. No environment variables required. `vercel.json` supplies static output settings, security headers and immutable hashed-asset caching. Deployment requires your account/project authorization; no production deployment is made by building locally.
+
+## Limitations / content
+
+- Desktop keyboard/mouse only. No touch controls, gamepad support, fifth explorable floor, alternate endings, multiplayer, or backend.
+- Flashing/fading lights, abrupt synthesized sounds and a stalking humanoid; no gore. Reduced flashing limits modulation, not a medical-safety guarantee.
+- Embedded/enterprise browsers may deny pointer lock/fullscreen. Use a standalone hardware-accelerated desktop tab.
+- Hardware-GPU performance, real-speaker mix/proximity tuning, and truly hidden-tab behavior require device testing. Software-renderer measurements must not be generalized to normal laptops.
+- Browser evidence and timings must come from the actual Talley build; the archived Hill results do not verify Talley.
+- No licensed soundtrack, downloaded models, external fonts, telemetry, AI services, official logos or real emergency-system instructions.
+
+Original source and generated assets are MIT licensed; see LICENSE. University/building names remain their owners' property; no endorsement is implied.

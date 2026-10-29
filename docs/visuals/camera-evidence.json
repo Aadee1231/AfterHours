@@ -1,0 +1,1214 @@
+{
+  "story-A-screens-third-tier": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "story",
+    "requested": {
+      "floor": 2,
+      "x": 0,
+      "z": 8,
+      "target": [
+        0,
+        11,
+        -6
+      ],
+      "name": "A-screens-third-tier"
+    },
+    "native": {
+      "at": "2026-10-29T06:30:59.716Z",
+      "floor": 2,
+      "player": {
+        "x": 0,
+        "z": 8
+      },
+      "camera": [
+        0,
+        1.67,
+        8
+      ],
+      "direction": [
+        0,
+        0.5545630224690299,
+        -0.8321417271775369
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1104,
+        "calls": 124,
+        "triangles": 11858,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 32,
+        "textures": 19
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 25.7157551860105,
+      "intervals": [
+        50,
+        33.30000000000291,
+        33.30000000000291,
+        50,
+        33.39999999999418,
+        49.900000000001455,
+        33.400000000001455,
+        33.400000000001455,
+        33.299999999995634,
+        50,
+        33.200000000004366,
+        33.400000000001455,
+        50,
+        33.299999999995634,
+        33.400000000001455
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        0,
+        1.67,
+        8
+      ],
+      "direction": [
+        0,
+        0.5545630224690299,
+        -0.8321417271775369
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "reference-A-screens-third-tier": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "reference",
+    "requested": {
+      "floor": 2,
+      "x": 0,
+      "z": 8,
+      "target": [
+        0,
+        11,
+        -6
+      ],
+      "name": "A-screens-third-tier"
+    },
+    "native": {
+      "at": "2026-10-29T06:33:21.945Z",
+      "floor": 2,
+      "player": {
+        "x": 0,
+        "z": 8
+      },
+      "camera": [
+        0,
+        1.67,
+        8
+      ],
+      "direction": [
+        0,
+        0.5545630224690299,
+        -0.8321417271775369
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 884,
+        "calls": 124,
+        "triangles": 11858,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 32,
+        "textures": 19
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 20.45547524887497,
+      "intervals": [
+        66.70000000000073,
+        49.89999999999782,
+        50.10000000000218,
+        49.89999999999782,
+        33.400000000001455,
+        66.59999999999854,
+        33.400000000001455,
+        66.70000000000073,
+        49.89999999999782,
+        50,
+        50,
+        50,
+        50.10000000000218,
+        33.19999999999709,
+        33.400000000001455
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        0,
+        1.67,
+        8
+      ],
+      "direction": [
+        0,
+        0.5545630224690299,
+        -0.8321417271775369
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "story-B-zigzag-stair": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "story",
+    "requested": {
+      "floor": 2,
+      "x": 4,
+      "z": 13,
+      "target": [
+        14,
+        6,
+        2
+      ],
+      "name": "B-zigzag-stair"
+    },
+    "native": {
+      "at": "2026-10-29T06:31:03.105Z",
+      "floor": 2,
+      "player": {
+        "x": 4,
+        "z": 13
+      },
+      "camera": [
+        4,
+        1.67,
+        13
+      ],
+      "direction": [
+        0.6458351653045613,
+        0.27964662657687506,
+        -0.7104186818350174
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1173,
+        "calls": 110,
+        "triangles": 10300,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 32,
+        "textures": 19
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 29.036004645760418,
+      "intervals": [
+        33.30000000000291,
+        33.30000000000291,
+        33.299999999995634,
+        33.400000000001455,
+        33.30000000000291,
+        33.39999999999418,
+        33.30000000000291,
+        33.30000000000291,
+        50.099999999998545,
+        33.299999999995634,
+        33.30000000000291,
+        33.30000000000291,
+        33.299999999995634,
+        33.400000000001455,
+        33.30000000000291
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        4,
+        1.67,
+        13
+      ],
+      "direction": [
+        0.6458351653045613,
+        0.27964662657687506,
+        -0.7104186818350174
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "reference-B-zigzag-stair": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "reference",
+    "requested": {
+      "floor": 2,
+      "x": 4,
+      "z": 13,
+      "target": [
+        14,
+        6,
+        2
+      ],
+      "name": "B-zigzag-stair"
+    },
+    "native": {
+      "at": "2026-10-29T06:33:27.219Z",
+      "floor": 2,
+      "player": {
+        "x": 4,
+        "z": 13
+      },
+      "camera": [
+        4,
+        1.67,
+        13
+      ],
+      "direction": [
+        0.6458351653045613,
+        0.27964662657687506,
+        -0.7104186818350174
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 970,
+        "calls": 110,
+        "triangles": 10300,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 32,
+        "textures": 19
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 21.428571428571427,
+      "intervals": [
+        33.39999999999418,
+        50,
+        33.30000000000291,
+        33.30000000000291,
+        50,
+        50,
+        33.299999999995634,
+        50,
+        50,
+        50,
+        66.70000000000437,
+        50,
+        50,
+        49.89999999999418,
+        50.10000000000582
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        4,
+        1.67,
+        13
+      ],
+      "direction": [
+        0.6458351653045613,
+        0.27964662657687506,
+        -0.7104186818350174
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "story-C-floor2-seating-entry": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "story",
+    "requested": {
+      "floor": 2,
+      "x": -2,
+      "z": -2,
+      "target": [
+        -2,
+        1.7,
+        19
+      ],
+      "name": "C-floor2-seating-entry"
+    },
+    "native": {
+      "at": "2026-10-29T06:31:06.403Z",
+      "floor": 2,
+      "player": {
+        "x": -2,
+        "z": -2
+      },
+      "camera": [
+        -2,
+        1.67,
+        -2
+      ],
+      "direction": [
+        0,
+        0.0014285699708477136,
+        0.9999989795933986
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1238,
+        "calls": 106,
+        "triangles": 9272,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 32,
+        "textures": 19
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 37.5,
+      "intervals": [
+        16.700000000004366,
+        33.299999999995634,
+        16.700000000004366,
+        33.299999999995634,
+        33.30000000000291,
+        16.69999999999709,
+        33.400000000001455,
+        33.30000000000291,
+        33.299999999995634,
+        16.700000000004366,
+        16.599999999998545,
+        33.400000000001455,
+        33.299999999995634,
+        16.700000000004366,
+        33.299999999995634
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        -2,
+        1.67,
+        -2
+      ],
+      "direction": [
+        0,
+        0.0014285699708477136,
+        0.9999989795933986
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "reference-C-floor2-seating-entry": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "reference",
+    "requested": {
+      "floor": 2,
+      "x": -2,
+      "z": -2,
+      "target": [
+        -2,
+        1.7,
+        19
+      ],
+      "name": "C-floor2-seating-entry"
+    },
+    "native": {
+      "at": "2026-10-29T06:33:31.165Z",
+      "floor": 2,
+      "player": {
+        "x": -2,
+        "z": -2
+      },
+      "camera": [
+        -2,
+        1.67,
+        -2
+      ],
+      "direction": [
+        0,
+        0.0014285699708477136,
+        0.9999989795933986
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1038,
+        "calls": 106,
+        "triangles": 9272,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 32,
+        "textures": 19
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 32.14744963566234,
+      "intervals": [
+        33.299999999995634,
+        33.400000000001455,
+        33.30000000000291,
+        33.299999999995634,
+        33.30000000000291,
+        33.400000000001455,
+        33.299999999995634,
+        16.700000000004366,
+        33.299999999995634,
+        33.30000000000291,
+        33.299999999995634,
+        16.700000000004366,
+        33.400000000001455,
+        33.299999999995634,
+        33.30000000000291
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        -2,
+        1.67,
+        -2
+      ],
+      "direction": [
+        0,
+        0.0014285699708477136,
+        0.9999989795933986
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "story-D-floor2-dining": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "story",
+    "requested": {
+      "floor": 2,
+      "x": 0,
+      "z": -10,
+      "target": [
+        -2,
+        1.8,
+        -19
+      ],
+      "name": "D-floor2-dining"
+    },
+    "native": {
+      "at": "2026-10-29T06:31:09.448Z",
+      "floor": 2,
+      "player": {
+        "x": 0,
+        "z": -10
+      },
+      "camera": [
+        0,
+        1.67,
+        -10
+      ],
+      "direction": [
+        -0.21690889559428084,
+        0.014099078213628269,
+        -0.9760900301742639
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1308,
+        "calls": 64,
+        "triangles": 7458,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 33,
+        "textures": 20
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 37.5,
+      "intervals": [
+        16.69999999999709,
+        33.400000000001455,
+        16.5,
+        33.400000000001455,
+        33.400000000001455,
+        33.299999999995634,
+        33.30000000000291,
+        16.69999999999709,
+        33.30000000000291,
+        16.599999999998545,
+        33.5,
+        16.599999999998545,
+        33.30000000000291,
+        16.69999999999709,
+        33.30000000000291
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        0,
+        1.67,
+        -10
+      ],
+      "direction": [
+        -0.21690889559428084,
+        0.014099078213628269,
+        -0.9760900301742639
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "reference-D-floor2-dining": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "reference",
+    "requested": {
+      "floor": 2,
+      "x": 0,
+      "z": -10,
+      "target": [
+        -2,
+        1.8,
+        -19
+      ],
+      "name": "D-floor2-dining"
+    },
+    "native": {
+      "at": "2026-10-29T06:33:34.321Z",
+      "floor": 2,
+      "player": {
+        "x": 0,
+        "z": -10
+      },
+      "camera": [
+        0,
+        1.67,
+        -10
+      ],
+      "direction": [
+        -0.21690889559428084,
+        0.014099078213628269,
+        -0.9760900301742639
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1102,
+        "calls": 64,
+        "triangles": 7458,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 33,
+        "textures": 20
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 37.5,
+      "intervals": [
+        33.30000000000291,
+        33.39999999999418,
+        16.60000000000582,
+        33.39999999999418,
+        33.30000000000291,
+        16.69999999999709,
+        33.200000000004366,
+        16.69999999999709,
+        33.400000000001455,
+        16.599999999998545,
+        33.400000000001455,
+        16.69999999999709,
+        33.200000000004366,
+        16.799999999995634,
+        33.30000000000291
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        0,
+        1.67,
+        -10
+      ],
+      "direction": [
+        -0.21690889559428084,
+        0.014099078213628269,
+        -0.9760900301742639
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "story-E-floor3-state-ballroom": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "story",
+    "requested": {
+      "floor": 3,
+      "x": -12,
+      "z": 8,
+      "target": [
+        -21,
+        7.5,
+        3.7
+      ],
+      "name": "E-floor3-state-ballroom"
+    },
+    "native": {
+      "at": "2026-10-29T06:31:12.737Z",
+      "floor": 3,
+      "player": {
+        "x": -12,
+        "z": 8
+      },
+      "camera": [
+        -12,
+        6.67,
+        8
+      ],
+      "direction": [
+        -0.8991960285679922,
+        0.08292585596793707,
+        -0.4296158803158183
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1384,
+        "calls": 86,
+        "triangles": 6392,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 37,
+        "textures": 36
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 33.34074238719705,
+      "intervals": [
+        49.900000000001455,
+        33.400000000001455,
+        16.69999999999709,
+        33.30000000000291,
+        33.299999999995634,
+        16.700000000004366,
+        33.299999999995634,
+        16.700000000004366,
+        33.299999999995634,
+        33.400000000001455,
+        33.30000000000291,
+        16.69999999999709,
+        33.30000000000291,
+        33.299999999995634,
+        33.30000000000291
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        -12,
+        6.67,
+        8
+      ],
+      "direction": [
+        -0.8991960285679922,
+        0.08292585596793707,
+        -0.4296158803158183
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "reference-E-floor3-state-ballroom": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "reference",
+    "requested": {
+      "floor": 3,
+      "x": -12,
+      "z": 8,
+      "target": [
+        -21,
+        7.5,
+        3.7
+      ],
+      "name": "E-floor3-state-ballroom"
+    },
+    "native": {
+      "at": "2026-10-29T06:33:37.303Z",
+      "floor": 3,
+      "player": {
+        "x": -12,
+        "z": 8
+      },
+      "camera": [
+        -12,
+        6.67,
+        8
+      ],
+      "direction": [
+        -0.8991960285679922,
+        0.08292585596793707,
+        -0.4296158803158183
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1161,
+        "calls": 86,
+        "triangles": 6392,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 37,
+        "textures": 36
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 32.140561388472456,
+      "intervals": [
+        33.5,
+        33.19999999999709,
+        33.400000000001455,
+        16.599999999998545,
+        33.400000000001455,
+        33.299999999995634,
+        33.400000000001455,
+        33.30000000000291,
+        33.299999999995634,
+        33.30000000000291,
+        16.69999999999709,
+        33.30000000000291,
+        33.30000000000291,
+        33.39999999999418,
+        33.30000000000291
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        -12,
+        6.67,
+        8
+      ],
+      "direction": [
+        -0.8991960285679922,
+        0.08292585596793707,
+        -0.4296158803158183
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "story-F-upper-study-rail": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "story",
+    "requested": {
+      "floor": 4,
+      "x": 19,
+      "z": 12,
+      "target": [
+        7,
+        12.3,
+        16
+      ],
+      "name": "F-upper-study-rail"
+    },
+    "native": {
+      "at": "2026-10-29T06:31:16.959Z",
+      "floor": 4,
+      "player": {
+        "x": 19,
+        "z": 12
+      },
+      "camera": [
+        19,
+        11.67,
+        12
+      ],
+      "direction": [
+        -0.9475088189279677,
+        0.04974421299371837,
+        0.3158362729759894
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1476,
+        "calls": 141,
+        "triangles": 10492,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 39,
+        "textures": 46
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 23.68545712932276,
+      "intervals": [
+        50,
+        33.39999999999418,
+        50,
+        49.900000000001455,
+        33.400000000001455,
+        33.30000000000291,
+        50,
+        50,
+        33.39999999999418,
+        33.30000000000291,
+        49.900000000001455,
+        33.400000000001455,
+        50,
+        50,
+        33.299999999995634
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        19,
+        11.67,
+        12
+      ],
+      "direction": [
+        -0.9475088189279677,
+        0.04974421299371837,
+        0.3158362729759894
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  },
+  "reference-F-upper-study-rail": {
+    "fixture": "5c927ea furnished camera fixture, not gameplay",
+    "revision": "5c927ea",
+    "mode": "reference",
+    "requested": {
+      "floor": 4,
+      "x": 19,
+      "z": 12,
+      "target": [
+        7,
+        12.3,
+        16
+      ],
+      "name": "F-upper-study-rail"
+    },
+    "native": {
+      "at": "2026-10-29T06:33:41.668Z",
+      "floor": 4,
+      "player": {
+        "x": 19,
+        "z": 12
+      },
+      "camera": [
+        19,
+        11.67,
+        12
+      ],
+      "direction": [
+        -0.9475088189279677,
+        0.04974421299371837,
+        0.3158362729759894
+      ],
+      "fov": 68,
+      "render": {
+        "frame": 1242,
+        "calls": 141,
+        "triangles": 10492,
+        "points": 0,
+        "lines": 0
+      },
+      "memory": {
+        "geometries": 39,
+        "textures": 46
+      },
+      "dpr": 0.45,
+      "buffer": [
+        576,
+        378
+      ],
+      "viewport": [
+        1280,
+        841
+      ],
+      "tier": "software-low",
+      "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+      "fps": 27.277686852154865,
+      "intervals": [
+        33.30000000000291,
+        33.400000000001455,
+        33.19999999999709,
+        33.30000000000291,
+        33.5,
+        49.89999999999418,
+        50,
+        33.400000000001455,
+        49.900000000001455,
+        33.30000000000291,
+        33.39999999999418,
+        33.400000000001455,
+        33.30000000000291,
+        33.299999999995634,
+        33.30000000000291
+      ],
+      "flags": {
+        "power": false,
+        "board": false,
+        "badge": false,
+        "authorized": false,
+        "checkpoint": 0
+      }
+    },
+    "diagnosticStill": {
+      "camera": [
+        19,
+        11.67,
+        12
+      ],
+      "direction": [
+        -0.9475088189279677,
+        0.04974421299371837,
+        0.3158362729759894
+      ],
+      "fov": 68,
+      "dpr": 1,
+      "buffer": [
+        1280,
+        841
+      ],
+      "visibility": "visible"
+    }
+  }
+}

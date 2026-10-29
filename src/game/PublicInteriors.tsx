@@ -67,7 +67,7 @@ function BallroomExterior() {
   ], [])
   return <>
     <Instances items={panels} />
-    <Sign text="STATE BALLROOM" at={[-20.32, 3.65, 3.7]} rotation={[0, Math.PI / 2, 0]} size={[8, .6]} bg="transparent" fg="#e6e9e8" />
+    <Sign text="STATE BALLROOM" at={[-20.32, 3.95, 3.7]} rotation={[0, Math.PI / 2, 0]} size={[8, .6]} bg="transparent" fg="#e6e9e8" />
     <Box at={[-3, 2.1, -21.65]} size={[7.7, 4.2, .3]} color="#e0e1dc" />
     <Sign text="STEWART THEATRE" small="3 / PUBLIC LOUNGE · CLOSED AFTER HOURS" at={[-3, 3, -21.45]} size={[6.8, .6]} bg="transparent" fg="#41494b" />
   </>
@@ -106,8 +106,5 @@ function UpperPublicSpace({ floor }: { floor: 3 | 4 }) {
 }
 
 export function PublicInteriors({ floor }: { floor: Floor }) {
-  return <>
-    {floor === 2 && <DiningBooths />}
-    <UpperPublicSpace floor={3} /><UpperPublicSpace floor={4} />
-  </>
+  return floor === 2 ? <DiningBooths /> : <UpperPublicSpace floor={floor} />
 }

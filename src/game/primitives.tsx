@@ -24,6 +24,6 @@ export function Instances({ items, round = false, unlit = false }: { items: Inst
   return <instancedMesh ref={ref} args={[round ? cylinder : cube, undefined, items.length]} dispose={null}>{unlit ? <meshBasicMaterial color="white" /> : <meshLambertMaterial color="white" />}</instancedMesh>
 }
 export function Sign({ text, at, size, rotation = [0, 0, 0], small, bg, fg, glow = .16 }: { text: string; at: XYZ; size: [number, number]; rotation?: XYZ; small?: string; bg?: string; fg?: string; glow?: number }) {
-  const map = useMemo(() => signTexture(text, { small, bg, fg }), [text, small, bg, fg])
-  return <mesh position={at} rotation={rotation}><planeGeometry args={size} /><meshBasicMaterial map={map} color={glow > 0 ? '#ffffff' : '#b9b9af'} side={THREE.DoubleSide} /></mesh>
+  const map = useMemo(() => signTexture(text, { small, bg, fg, border: bg !== 'transparent' }), [text, small, bg, fg])
+  return <mesh position={at} rotation={rotation}><planeGeometry args={size} /><meshBasicMaterial map={map} color={glow > 0 ? '#ffffff' : '#b9b9af'} transparent={bg === 'transparent'} alphaTest={bg === 'transparent' ? .05 : 0} side={THREE.DoubleSide} /></mesh>
 }

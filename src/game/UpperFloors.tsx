@@ -24,7 +24,7 @@ function ClosedDoors({ at, rotation = [0, 0, 0], label, small, ballroom = false 
   ], [ballroom, width, height])
   return <group position={at} rotation={rotation}>
     <Instances items={pieces} />
-    <Sign text={label} small={small} at={[0, height + .48, .045]} size={[width + .3, .75]} bg={ballroom ? green : '#343d49'} fg={cream} />
+    {!ballroom && <Sign text={label} small={small} at={[0, height + .48, .045]} size={[width + .3, .75]} bg="#343d49" fg={cream} />}
     <Sign text="CLOSED" at={[0, 2.12, .055]} size={[ballroom ? 1.6 : 1.1, .35]} bg={ballroom ? '#69543e' : '#535360'} fg={cream} />
   </group>
 }

@@ -102,7 +102,15 @@ For a controlled **development-only** lighting review, start Vite and add `?ligh
 
 See [visual-gap-analysis.md](visual-gap-analysis.md) for the original gaps and [visual-comparison.md](visual-comparison.md) for camera evidence and remaining deviations. All 38 supplied originals were reviewed outside the checkout. The private package is ignored, never imported or copied into `src`, `public` or `dist`.
 
-### Browser verification
+### Photo-rebuild browser verification
+
+The architecture revision has **26 passing automated tests**, plus clean TypeScript, ESLint, production build, diff check and production dependency audit. All six A–F camera checkpoints have matched neutral/story screenshots. [Visual comparison](visual-comparison.md) records the cameras, actual screenshots, deviations and revision-specific coverage; private originals are delivered separately, never published here.
+
+The full physical production route passed on **dff57a56**, including both U-stair ascents/descents, board exposure, badge/release, checkpoint1 retry and genuine escape. Victory was 07:27 game time / about14m02s wall time, attempt03, including one deliberate and one unintended badge-panel catch. This is not a slow-reader or blind-player pacing guarantee. The following **5c927ea** changed only sign alpha/header layout and off-floor decorative mounting; its six camera pairs and fresh-production phone/panel/movement smoke passed, but the full route was not repeated. Colliders, anchors and gameplay code were unchanged in that follow-up.
+
+**Remaining performance issue:** native software-low SwiftShader measured F2 34.29FPS, F3 25.26 and F4 16.25 over10-second production samples at DPR0.45/576×378. The final same-camera F4 development fixture measured16.84FPS with181calls rather than203; this is not a strict same-state benchmark. Floor4 remains visibly stuttery on this VM. Hardware GPU, real speakers, hidden-tab behavior and detailed checkpoint2/buffer-matrix regression on the architecture revision remain unverified. Photo-exact fidelity is not claimed.
+
+### Earlier Talley browser verification — historical, before the photo rebuild
 
 Production-preview testing used actual keyboard/mouse inputs, with no injected progress or teleportation. Independent fresh onboarding, the full 24-second intro, a genuine three-floor escape, wrong puzzle choices, both earned checkpoint retries, phone/focus recovery, pause/restart/replay, void blocking and visible death/escape sequences passed on the initial Talley gameplay revision. The subsequent reading-buffer revision was separately played from a fresh start through an earned badge, intentional post-expiry catch/retry, and genuine escape; no additional unintended terminal death occurred.
 

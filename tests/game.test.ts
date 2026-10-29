@@ -53,7 +53,7 @@ describe('floor-aware world and seeded puzzles', () => {
   })
   it('matches stepped atrium collision to the rendered boundaries without sealing balcony alcoves', () => {
     for (const floor of [3, 4] as const) {
-      for (let x = -9; x <= 11; x += .5) for (let z = -10; z <= 12; z += .5) {
+      for (let x = -10; x <= 21; x += .5) for (let z = -11; z <= 14; z += .5) {
         const p = { x: x + .13, z: z + .13 }
         const blockedByVoid = OBSTACLES[floor].filter(o => o.kind === 'void').some(o => Math.abs(p.x - o.x) < o.w / 2 && Math.abs(p.z - o.z) < o.d / 2)
         expect(blockedByVoid).toBe(insideAtrium(p.x, p.z, floor))
@@ -61,6 +61,18 @@ describe('floor-aware world and seeded puzzles', () => {
     }
     expect(isBlocked(10, -9, .3, 3)).toBe(false)
     expect(isBlocked(-8, 10, .3, 4)).toBe(false)
+  })
+  it('keeps upper furniture supported and the recessed glazing doorways open', () => {
+    for (const floor of [3, 4] as const) {
+      for (const p of OBSTACLES[floor].filter(o => o.kind === 'desk' || o.kind === 'sofa')) {
+        for (const dx of [-p.w / 2, 0, p.w / 2]) for (const dz of [-p.d / 2, 0, p.d / 2])
+          expect(insideAtrium(p.x + dx, p.z + dz, floor), `floor ${floor} furniture ${p.x},${p.z}`).toBe(false)
+      }
+      const z = floor === 3 ? 11.5 : 15.4
+      expect(isBlocked(-3, z, .3, floor)).toBe(true)
+      expect(isBlocked(0, z, .3, floor)).toBe(false)
+      expect(isBlocked(6, z, .3, floor)).toBe(false)
+    }
   })
   it('connects every interactable to its floor landing without traversing the void or stair body', () => {
     for (const [id, anchor] of Object.entries(ANCHORS)) {
@@ -158,7 +170,7 @@ describe('fair pursuit, transitions and recovery', () => {
     power(); climb('up2'); badge(); climb('up3'); at('release')
     const deadline = useGame.getState().graceUntil
     expect(deadline - runtime.time).toBe(20)
-    runtime.entity = { x: 18, z: -7 }; runtime.entityFloor = 4
+    runtime.entity = { x: 19, z: -19 }; runtime.entityFloor = 4
     expect(isBlocked(runtime.entity.x, runtime.entity.z, .38, 4)).toBe(false)
     const initial = { ...runtime.entity }; advance(5)
     expect(distance(initial, runtime.entity)).toBeGreaterThan(1)
@@ -178,8 +190,9 @@ describe('fair pursuit, transitions and recovery', () => {
     for (const floor of FLOORS) {
       useGame.getState().start(floor); useGame.getState().enter()
       useGame.setState({ power: true, doorsTried: true, phoneTaught: true, floor, graceUntil: 500 })
-      runtime.player = { x: 18, z: -14 }; runtime.entity = { x: 19, z: 0 }; runtime.entityFloor = floor
+      runtime.player = { x: 18, z: -14 }; runtime.entity = { x: 19, z: -21 }; runtime.entityFloor = floor
       expect(isBlocked(runtime.entity.x, runtime.entity.z, .38, floor)).toBe(false)
+      expect(distance(runtime.player, runtime.entity)).toBeGreaterThan(6)
       useGame.getState().togglePhone(); const before = { ...runtime.entity }; advance(3)
       expect(distance(before, runtime.entity), `floor ${floor}`).toBeGreaterThan(1)
       expect(isBlocked(runtime.entity.x, runtime.entity.z, .3, floor)).toBe(false)
@@ -189,7 +202,7 @@ describe('fair pursuit, transitions and recovery', () => {
   })
   it('cannot pursue through the atrium void or change floor in normal pursuit', () => {
     useGame.setState({ power: true, doorsTried: true, phone: true, floor: 3, graceUntil: 200 })
-    runtime.entityFloor = 3; runtime.entity = { x: 17, z: -8 }; runtime.player = { x: -12, z: 8 }
+    runtime.entityFloor = 3; runtime.entity = { x: 19, z: -11 }; runtime.player = { x: -12, z: 8 }
     expect(isBlocked(runtime.entity.x, runtime.entity.z, .38, 3)).toBe(false)
     for (let i = 0; i < 800; i++) { advance(.1); expect(isBlocked(runtime.entity.x, runtime.entity.z, .3, 3)).toBe(false) }
     expect(runtime.entity.x).toBeLessThan(-9)

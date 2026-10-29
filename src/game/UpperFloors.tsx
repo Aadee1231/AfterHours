@@ -85,11 +85,11 @@ function FloorFinishes({ floor }: { floor: UpperFloor }) {
       part([0, .009, -16.4], [39.5, .012, 4.6], base),
       part([0, .009, 16.3], [39.5, .012, 4.7], warm ? '#707476' : '#697176'),
       part([-19.45, .009, 0], [3, .012, 27], base),
-      part([19.45, .009, 0], [3, .012, 27], base),
+      part([21.35, .009, 0], [1, .012, 27], base),
       part([0, .017, -18.55], [39.5, .008, .48], accent),
       part([0, .017, 18.5], [39.5, .008, .48], accent),
     ]
-    for (const x of [-19.9, -19.5, -19.1, 19.1, 19.5, 19.9])
+    for (const x of [-19.9, -19.5, -19.1, 21.05, 21.35, 21.65])
       result.push(part([x, .017, 0], [.045, .008, 25.5], accent))
     for (let x = -18; x <= 18; x += 3)
       result.push(part([x, .018, 16.3], [.12, .008, 4.2], warm ? '#9a3440' : '#89929a'))
@@ -182,8 +182,8 @@ function StairWayfinding({ floor }: { floor: UpperFloor }) {
 }
 
 const lampLocations: Record<UpperFloor, [number, number][]> = {
-  3: [[-18.8, -16], [-10, -17.3], [0, -17.3], [11, -17.3], [19.2, -9], [19.2, 3], [19.2, 15], [0, 17.2], [-19.2, 14], [-19.2, 3]],
-  4: [[18.5, -15], [19.2, -7], [19.2, 2], [19.2, 13], [10, 17.2], [0, 17.2], [-11, 17.2], [-19.2, 12], [-19.2, 5], [-19.2, -16]],
+  3: [[-18.8, -16], [-10, -17.3], [0, -17.3], [11, -17.3], [19.2, -9], [21.35, 3], [19.2, 15], [0, 17.2], [-19.2, 14], [-19.2, 3]],
+  4: [[18.5, -15], [21.35, -7], [21.35, 2], [19.2, 13], [10, 17.2], [0, 17.2], [-11, 17.2], [-19.2, 12], [-19.2, 5], [-19.2, -16]],
 }
 
 /** Sequential, widely spaced fades in instanced geometry; zero runtime lights. */
@@ -196,10 +196,10 @@ function CorridorLamps({ floor }: { floor: UpperFloor }) {
   const dark = useMemo(() => new THREE.Color('#5a6262'), [])
   const tint = useMemo(() => new THREE.Color(), [])
   const frames = useMemo(() => [
-    ...lampLocations[floor].map(([x, z]) => part([x, 4.27, z], [2.65, .16, .65], floor === 3 ? '#928e7d' : '#8a9196')),
+    ...lampLocations[floor].map(([x, z]) => part([x, 4.27, z], [x > 21 ? 1 : 2.65, .16, .65], floor === 3 ? '#928e7d' : '#8a9196')),
     ...lampLocations[floor].map(([x, z]) => part([x, floor === 3 ? 4.56 : 6.14, z], [.04, floor === 3 ? .4 : 3.5, .04], '#a8aaa4')),
   ], [floor])
-  const strips = useMemo(() => lampLocations[floor].map(([x, z], i) => part([x, 4.175, z], [2.42, .035, .46],
+  const strips = useMemo(() => lampLocations[floor].map(([x, z], i) => part([x, 4.175, z], [x > 21 ? .84 : 2.42, .035, .46],
     previouslyDark && i < lampLocations[floor].length - 2 ? '#5a6262' : floor === 3 ? '#ede2bd' : '#dce2e6',
   )), [floor, previouslyDark])
   useFrame((_, dt) => {

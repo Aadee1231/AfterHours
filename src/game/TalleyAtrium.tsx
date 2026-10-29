@@ -1,12 +1,13 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { Instances, Sign, type Instance, type XYZ } from './primitives'
-import { ATRIUM_BOUNDARIES, COLUMNS, STAIR_PATHS, type Point, type StairPoint } from './world'
+import { ATRIUM_BOUNDARIES, ATRIUM_GLAZING, COLUMNS, STAIR_PATHS, insideAtrium, type Point, type StairPoint } from './world'
 import { surfaceTexture } from './textures'
 
 const cube = new THREE.BoxGeometry(1, 1, 1)
 const white = new THREE.MeshLambertMaterial({ color: '#e6e5df' })
 const glass = new THREE.MeshBasicMaterial({ color: '#bad2d0', transparent: true, opacity: .09, depthWrite: false, side: THREE.DoubleSide })
+const windowGlass = new THREE.MeshBasicMaterial({ color: '#526d6d', transparent: true, opacity: .82, depthWrite: false, side: THREE.DoubleSide })
 const part = (at: XYZ, size: XYZ, color: string, rotation?: XYZ): Instance => ({ at, size, color, rotation })
 const line = (a: XYZ, b: XYZ, width: number, color: string): Instance => {
   const start = new THREE.Vector3(...a), end = new THREE.Vector3(...b), delta = end.clone().sub(start)
@@ -28,6 +29,14 @@ function floorGeometry(level: 3 | 4 | 5) {
 }
 const floors = ([3, 4, 5] as const).map(level => ({ level, geometry: floorGeometry(level) }))
 const edges = floors.flatMap(({ level }) => ATRIUM_BOUNDARIES[level].map((a, i, points) => ({ a, b: points[(i + 1) % points.length], y: (level - 2) * 5 })))
+const guards = edges.flatMap(edge => {
+  const { a, b } = edge
+  if (a.z !== b.z || Math.abs(a.z) < 8 || Math.abs(a.z) > 12) return [edge]
+  const lo = Math.min(a.x, b.x), hi = Math.max(a.x, b.x)
+  if (hi <= 12 || lo >= 16) return [edge]
+  return [[lo, Math.min(12, hi)], [Math.max(16, lo), hi]].filter(([x1, x2]) => x2 - x1 > .05)
+    .map(([x1, x2]) => ({ a: { x: x1, z: a.z }, b: { x: x2, z: a.z }, y: edge.y }))
+})
 const edgeTrim = edges.flatMap(({ a, b, y }) => {
   const width = Math.abs(b.x - a.x), depth = Math.abs(b.z - a.z), x = (a.x + b.x) / 2, z = (a.z + b.z) / 2
   return [part([x, y - .27, z], [width || .18, .18, depth || .18], '#f2f1eb'),
@@ -50,6 +59,14 @@ function Guard({ a, b, y }: { a: Point; b: Point; y: number }) {
 }
 
 function Decks() {
+  const ceilingBays = floors.flatMap(({ level }) => {
+    const result: Instance[] = [], y = (level - 2) * 5 - .365
+    for (let x = -20; x <= 20; x += 4) for (let z = -20; z <= 20; z += 4) {
+      if ([-1.9, 1.9].some(dx => [-1.9, 1.9].some(dz => insideAtrium(x + dx, z + dz, level))) || insideAtrium(x, z, level)) continue
+      result.push(part([x, y, z], [3.86, .065, 3.86], '#b6bdb7'))
+    }
+    return result
+  })
   const soffitLights = edges.flatMap(({ a, b, y }) => {
     const length = Math.hypot(a.x - b.x, a.z - b.z), count = Math.floor(length / 1.8)
     return Array.from({ length: count }, (_, i) => part([a.x + (b.x - a.x) * (i + .5) / count, y - .335, a.z + (b.z - a.z) * (i + .5) / count], [.16, .012, .16], '#dce4dc'))
@@ -58,8 +75,10 @@ function Decks() {
   return <>
     {floors.map(({ level, geometry }) => <mesh key={level} geometry={geometry} material={white} position={[0, (level - 2) * 5 - .32, 0]} dispose={null} />)}
     <Instances items={edgeTrim} />
+    <Instances items={ceilingBays} />
+    <Instances items={ceilingBays.map(({ at }) => part([at[0], at[1] - .05, at[2]], [.28, .055, .28], '#e0e7dc'))} round unlit />
     <Instances items={[...soffitLights, ...strips]} unlit />
-    {edges.map((edge, i) => <Guard key={i} {...edge} />)}
+    {guards.map((edge, i) => <Guard key={i} {...edge} />)}
   </>
 }
 
@@ -141,6 +160,14 @@ function Roof() {
 }
 
 function Facades() {
+  const internalGlazing = [...ATRIUM_GLAZING[3].map(p => ({ ...p, y: 5 })), ...ATRIUM_GLAZING[4].map(p => ({ ...p, y: 10 })),
+    ...ATRIUM_GLAZING[4].map(p => ({ ...p, z: 18.4, y: 15, h: 2.8 }))]
+  const internalFrames = internalGlazing.flatMap(p => [
+    ...Array.from({ length: Math.ceil(p.w / 1.4) + 1 }, (_, i) => part([p.x - p.w / 2 + p.w * i / Math.ceil(p.w / 1.4), p.y + p.h / 2, p.z - .1], [.055, p.h, .08], '#8b9995')),
+    ...[.15, 1.15, p.h - .05].map(y => part([p.x, p.y + y, p.z - .1], [p.w, .055, .08], '#a9b1a8')),
+    part([p.x, p.y + p.h, p.z], [p.w + .12, .2, .32], '#d5d9d0'),
+    part([p.x, p.y + p.h - .3, p.z + .32], [p.w - .3, .045, .18], '#cbd6c8'),
+  ])
   const frames = floors.flatMap(({ level }) => {
     const y = (level - 2) * 5, z = 21.9
     return [part([0, y + 2.15, z], [40, 4.22, .14], '#263537'),
@@ -166,6 +193,8 @@ function Facades() {
     ...[.15, 5.15, 10.15, 15.15].map(y => part([x, y, z], [1.2, .18, 1.2], '#737e78')),
   ])
   return <>
+    {internalGlazing.map((p, i) => <mesh key={i} position={[p.x, p.y + p.h / 2, p.z]} geometry={cube} material={windowGlass} scale={[p.w, p.h, .02]} dispose={null} />)}
+    <Instances items={internalFrames} />
     <Instances items={[...frames, ...southFrames, ...returns, ...lowShops]} />
     <Instances items={c} round />
     {[-21.98, 21.98].map(z => <mesh key={z} position={[0, 9, z]} material={glass} geometry={cube} scale={[44, 18, .018]} dispose={null} />)}

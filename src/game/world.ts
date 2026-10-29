@@ -43,13 +43,13 @@ export function stairPosition(from: Floor, to: Floor, progress: number): StairPo
   return path[0]
 }
 export const ATRIUM_OPENINGS: Record<3 | 4, { x1: number; x2: number; z1: number; z2: number }> = {
-  3: { x1: -9, x2: 16, z1: -10, z2: 12 },
-  4: { x1: -7.2, x2: 16, z1: -10, z2: 13 },
+  3: { x1: -9, x2: 20.8, z1: -10, z2: 12 },
+  4: { x1: -7.2, x2: 20.8, z1: -10, z2: 13 },
 }
 export const ATRIUM_BOUNDARIES: Record<3 | 4 | 5, Point[]> = {
-  3: [{ x: -9, z: -10 }, { x: 8, z: -10 }, { x: 8, z: -8.5 }, { x: 16, z: -8.5 }, { x: 16, z: 8.5 }, { x: 11, z: 8.5 }, { x: 11, z: 9 }, { x: -6, z: 9 }, { x: -6, z: 12 }, { x: -9, z: 12 }],
-  4: [{ x: -7.2, z: -10 }, { x: 11, z: -10 }, { x: 11, z: -8.5 }, { x: 16, z: -8.5 }, { x: 16, z: 8.5 }, { x: 8, z: 8.5 }, { x: 8, z: 13 }, { x: -7.2, z: 13 }],
-  5: [{ x: -9, z: -8.5 }, { x: 16, z: -8.5 }, { x: 16, z: 12 }, { x: 8, z: 12 }, { x: 8, z: 16 }, { x: -5, z: 16 }, { x: -5, z: 11 }, { x: -9, z: 11 }],
+  3: [{ x: -9, z: -10 }, { x: 8, z: -10 }, { x: 8, z: -8.5 }, { x: 20.8, z: -8.5 }, { x: 20.8, z: 8.5 }, { x: 11, z: 8.5 }, { x: 11, z: 9 }, { x: -6, z: 9 }, { x: -6, z: 12 }, { x: -9, z: 12 }],
+  4: [{ x: -7.2, z: -10 }, { x: 11, z: -10 }, { x: 11, z: -8.5 }, { x: 20.8, z: -8.5 }, { x: 20.8, z: 8.5 }, { x: 8, z: 8.5 }, { x: 8, z: 13 }, { x: -7.2, z: 13 }],
+  5: [{ x: -9, z: -8.5 }, { x: 20.8, z: -8.5 }, { x: 20.8, z: 12 }, { x: 8, z: 12 }, { x: 8, z: 16 }, { x: -5, z: 16 }, { x: -5, z: 11 }, { x: -9, z: 11 }],
 }
 export function insideAtrium(x: number, z: number, floor: 3 | 4 | 5) {
   const polygon = ATRIUM_BOUNDARIES[floor]
@@ -67,13 +67,18 @@ export const STUDY_PODS: Record<3 | 4, Point[]> = {
   3: [-6, 0, 6].map(x => ({ x, z: 16 })),
   4: [-17, -12, -7, 12, 17].map(x => ({ x, z: 16 })),
 }
+export const ATRIUM_GLAZING: Record<3 | 4, Obstacle[]> = Object.fromEntries(([3, 4] as const).map(floor => [floor,
+  [[-6, -1], [1, 5], [7, 10]].map(([x1, x2]) => ({ x: (x1 + x2) / 2, z: floor === 3 ? 11.5 : 15.4, w: x2 - x1, d: .16, h: 4.2, kind: 'wall' as const })),
+])) as Record<3 | 4, Obstacle[]>
 export const PUBLIC_FIXTURES: Record<Floor, Obstacle[]> = {
   2: [...BOOTHS.map(p => ({ ...p, w: 3.2, d: 2.8, h: 1.35, kind: 'desk' as const })),
     { x: 7.5, z: -17, w: .12, d: 2.8, h: 1.05, kind: 'desk' }],
   3: [...STUDY_PODS[3].map(p => ({ ...p, w: 3.2, d: 2.8, h: .9, kind: 'desk' as const })),
+    ...ATRIUM_GLAZING[3],
     { x: -16.2, z: -10, w: .5, d: 1.5, h: 2.4, kind: 'desk' },
     { x: -21.2, z: 3.7, w: 1.4, d: 15, h: 4.3, kind: 'wall' }],
   4: [...STUDY_PODS[4].map(p => ({ ...p, w: 3.2, d: 2.8, h: .9, kind: 'desk' as const })),
+    ...ATRIUM_GLAZING[4],
     { x: 0, z: -20, w: 35, d: .12, h: 3.6, kind: 'wall' }],
 }
 export const COLUMNS = [-10.5, 18].flatMap(x => [-12.5, 13.5].map(z => ({ x, z })))
@@ -108,7 +113,7 @@ export const OBSTACLES: Record<Floor, Obstacle[]> = {
     { x: -18.8, z: 10, w: 3, d: 5, h: 1.1, kind: 'sofa' },
     { x: 15, z: 16, w: 5, d: 2, h: .8, kind: 'desk' }],
   4: [...walls, ...voidSpace(4), eastStair, ...PUBLIC_FIXTURES[4],
-    { x: 18.8, z: 8, w: 3, d: 5, h: 1, kind: 'sofa' },
+    { x: -18.8, z: 8, w: 3, d: 5, h: 1, kind: 'sofa' },
     { x: 0, z: -18, w: 6, d: 2, h: .85, kind: 'desk' }],
 }
 

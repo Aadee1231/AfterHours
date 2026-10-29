@@ -136,9 +136,7 @@ function BadgeLoans() {
   const venue = useGame(s => s.run.venue)
   const venues = useGame(s => s.run.venues)
   const { z } = ANCHORS.badge
-  const westStair = OBSTACLES[3].find(o => o.kind === 'stair' && o.x < 0)!
-  return <group position={[westStair.x - westStair.w / 2 - .02, 0, z]} rotation={[0, -Math.PI / 2, 0]}>
-    {/* Cabinet lies inside the existing west-stair obstacle, facing its badge anchor. */}
+  return <group position={[-16.2, 0, z]} rotation={[0, -Math.PI / 2, 0]}>
     <Box at={[0, 1.23, -.19]} size={[1.8, 1.75, .36]} color="#707c6f" />
     <Sign text="OVERRIDE BADGE LOANS" small="MATCH THE NIGHT OWL EVENT VENUE" at={[0, 1.79, .005]} size={[1.72, .48]} bg={green} fg={cream} />
     <Sign text={venues.join('\n')} at={[0, 1.15, .005]} size={[1.65, .68]} bg="#545d50" fg={cream} />
@@ -174,10 +172,10 @@ function ReleaseStation() {
 function StairWayfinding({ floor }: { floor: UpperFloor }) {
   const down = floor === 3 ? ANCHORS.down3 : ANCHORS.down4
   return <>
-    <Sign text={`${floor} · DOWN TO ${floor - 1} ↓`} small={floor === 3 ? 'MAIN ATRIUM / EXIT' : 'LOUNGE → FLOOR 2 / EXIT'} at={[floor === 3 ? 21.8 : -21.8, 2.9, down.z - .8]} rotation={[0, floor === 3 ? -Math.PI / 2 : Math.PI / 2, 0]} size={[4.1, 1]} bg={floor === 3 ? green : '#494456'} fg={cream} />
+    <Sign text={`${floor} · DOWN TO ${floor - 1} ↓`} small={floor === 3 ? 'MAIN ATRIUM / EXIT' : 'LOUNGE → FLOOR 2 / EXIT'} at={[21.8, 2.9, down.z - .8]} rotation={[0, -Math.PI / 2, 0]} size={[2.8, .65]} bg={floor === 3 ? green : '#494456'} fg={cream} />
     <Sign text={`↓ ${floor - 1} · STAIRS`} at={[down.x + (floor === 3 ? 2.4 : -2.4), .032, down.z - .7]} rotation={[-Math.PI / 2, 0, 0]} size={[2.5, .85]} bg={green} fg={cream} />
     {floor === 3 && <>
-      <Sign text="3 · UP TO 4 ↑" small="STUDENT ORGANIZATIONS / EXIT RELEASE" at={[-21.8, 2.9, ANCHORS.up3.z - .7]} rotation={[0, Math.PI / 2, 0]} size={[4.1, 1]} bg={green} fg={cream} />
+      <Sign text="3 · UP TO 4 ↑" small="STUDENT ORGANIZATIONS / EXIT RELEASE" at={[21.8, 2.9, ANCHORS.up3.z - .7]} rotation={[0, -Math.PI / 2, 0]} size={[2.8, .65]} bg={green} fg={cream} />
       <Sign text="↑ 4 · STAIRS" at={[ANCHORS.up3.x - 2.8, .032, ANCHORS.up3.z - 1]} rotation={[-Math.PI / 2, 0, 0]} size={[2.5, .85]} bg={green} fg={cream} />
     </>}
   </>
@@ -256,7 +254,7 @@ function OrganizationFloor() {
     <Noticeboard at={[-21.91, 1.9, 13.1]} rotation={[0, Math.PI / 2, 0]} title="ORGANIZATION NOTICES" notice="OFFICES CLOSED · PLEASE USE THE MAIN ATRIUM" cold />
     <Noticeboard at={[7.5, 1.9, -21.91]} title="AFTER-HOURS ASSISTANCE" notice="EXIT RELEASE → EAST / OVERRIDE BADGE REQUIRED" cold />
     <Sign text="TALLEY / 4" small="STUDENT ORGANIZATIONS / UPPER LOUNGE" at={[-2, 3.35, -21.89]} size={[6.4, 1.25]} bg="#474556" fg={cream} />
-    <Sign text="4 · UPPER LOUNGE" small="↓ 3 LOUNGE / ↓ 2 MAIN ATRIUM · WEST STAIRS" at={[0, 3.05, 21.89]} rotation={[0, Math.PI, 0]} size={[6.4, 1]} bg="#474556" fg={cream} />
+    <Sign text="4 · UPPER LOUNGE" small="↓ 3 LOUNGE / ↓ 2 MAIN ATRIUM · EAST STAIRS" at={[0, 3.05, 21.89]} rotation={[0, Math.PI, 0]} size={[6.4, 1]} bg="#474556" fg={cream} />
     <Sign text="EXIT RELEASE →" small="FICTIONAL TRAINING SYSTEM / NORTH-EAST WALKWAY" at={[21.87, 2.9, -14.5]} rotation={[0, -Math.PI / 2, 0]} size={[4.2, .9]} bg="#9e343b" fg={cream} />
     <ReleaseStation /><StairWayfinding floor={4} /><CorridorLamps floor={4} />
   </>

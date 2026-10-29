@@ -12,9 +12,9 @@ export const EXIT: Point = { x: 0, z: 20.5 }
 export const ANCHORS = {
   entrance: { ...EXIT, floor: 2 }, directory: { x: -9, z: 14, floor: 2 },
   powerNotice: { x: -17, z: 8, floor: 2 }, power: { x: -17, z: 4, floor: 2 },
-  up2: { x: 16, z: 12, floor: 2 }, down3: { x: 12, z: 12, floor: 3 },
+  up2: { x: 14, z: -11.5, floor: 2 }, down3: { x: 10, z: 12, floor: 3 },
   eventBoard: { x: -15, z: -16, floor: 3 }, badge: { x: -18, z: -10, floor: 3 },
-  up3: { x: -16, z: -12, floor: 3 }, down4: { x: -12, z: -12, floor: 4 },
+  up3: { x: 14, z: 12, floor: 3 }, down4: { x: 10, z: -11.5, floor: 4 },
   release: { x: 15, z: -14, floor: 4 },
 } satisfies Record<string, Point & { floor: Floor }>
 export type AnchorId = keyof typeof ANCHORS
@@ -24,10 +24,9 @@ export const STAIRS = [
 ]
 export type StairPoint = Point & { y: number }
 export const STAIR_PATHS: StairPoint[][] = STAIRS.map(({ bottom, top, from, to }, i) => {
-  const x = i === 0 ? 12 : -12, middleZ = i === 0 ? 4 : -4
-  const low = floorY(from), high = floorY(to), middle = (low + high) / 2
-  return [{ ...bottom, y: low }, { x: bottom.x, z: middleZ, y: middle },
-    { x, z: middleZ, y: middle }, { x, z: top.z + (i === 0 ? -2 : 2), y: high }, { ...top, y: high }]
+  const low = floorY(from), high = floorY(to), start = i === 0 ? -8 : 8
+  return [{ ...bottom, y: low }, { x: 14, z: start, y: low },
+    { x: 14, z: -start, y: high }, { x: 14, z: top.z, y: high }, { ...top, y: high }]
 })
 export function stairPosition(from: Floor, to: Floor, progress: number): StairPoint {
   const index = STAIRS.findIndex(s => s.from === Math.min(from, to))
@@ -44,8 +43,22 @@ export function stairPosition(from: Floor, to: Floor, progress: number): StairPo
   return path[0]
 }
 export const ATRIUM_OPENINGS: Record<3 | 4, { x1: number; x2: number; z1: number; z2: number }> = {
-  3: { x1: -9, x2: 9, z1: -10, z2: 10 },
-  4: { x1: -7.2, x2: 9, z1: -8, z2: 10 },
+  3: { x1: -9, x2: 11, z1: -10, z2: 12 },
+  4: { x1: -7.2, x2: 11, z1: -10, z2: 9 },
+}
+export const ATRIUM_BOUNDARIES: Record<3 | 4 | 5, Point[]> = {
+  3: [{ x: -9, z: -10 }, { x: 8, z: -10 }, { x: 8, z: -7 }, { x: 11, z: -7 }, { x: 11, z: 9 }, { x: -6, z: 9 }, { x: -6, z: 12 }, { x: -9, z: 12 }],
+  4: [{ x: -7.2, z: -10 }, { x: 11, z: -10 }, { x: 11, z: 6 }, { x: 8, z: 6 }, { x: 8, z: 9 }, { x: -7.2, z: 9 }],
+  5: [{ x: -9, z: -8 }, { x: 9, z: -8 }, { x: 9, z: 10 }, { x: -5, z: 10 }, { x: -5, z: 6 }, { x: -9, z: 6 }],
+}
+export function insideAtrium(x: number, z: number, floor: 3 | 4 | 5) {
+  const polygon = ATRIUM_BOUNDARIES[floor]
+  let inside = false
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    const a = polygon[i], b = polygon[j]
+    if ((a.z > z) !== (b.z > z) && x < (b.x - a.x) * (z - a.z) / (b.z - a.z) + a.x) inside = !inside
+  }
+  return inside
 }
 export const SOFAS = [{ x: -6, z: 3 }, { x: 6, z: -5 }]
 export const TABLES = [{ x: -16, z: -15 }, { x: -11, z: -15 }, { x: 15, z: -17 }, { x: 11, z: -17 }]
@@ -58,22 +71,30 @@ export const PUBLIC_FIXTURES: Record<Floor, Obstacle[]> = {
   2: [...BOOTHS.map(p => ({ ...p, w: 3.2, d: 2.8, h: 1.35, kind: 'desk' as const })),
     { x: 7.5, z: -17, w: .12, d: 2.8, h: 1.05, kind: 'desk' }],
   3: [...STUDY_PODS[3].map(p => ({ ...p, w: 3.2, d: 2.8, h: .9, kind: 'desk' as const })),
+    { x: -16.2, z: -10, w: .5, d: 1.5, h: 2.4, kind: 'desk' },
     { x: -21.2, z: 3.7, w: 1.4, d: 15, h: 4.3, kind: 'wall' }],
   4: [...STUDY_PODS[4].map(p => ({ ...p, w: 3.2, d: 2.8, h: .9, kind: 'desk' as const })),
     { x: 0, z: -20, w: 35, d: .12, h: 3.6, kind: 'wall' }],
 }
-export const COLUMNS = [-11, 11].flatMap(x => [-11.5, 11.5].map(z => ({ x, z })))
+export const COLUMNS = [-10.5, 18].flatMap(x => [-12.5, 13.5].map(z => ({ x, z })))
 const walls: Obstacle[] = [
   ...[-22.2, 22.2].map(x => ({ x, z: 0, w: .4, d: 44.8, h: 18, kind: 'wall' as const })),
   ...[-22.2, 22.2].map(z => ({ x: 0, z, w: 44.8, d: .4, h: 18, kind: 'wall' as const })),
-  ...COLUMNS.map(p => ({ ...p, w: .9, d: .9, h: 18, kind: 'column' as const })),
+  ...COLUMNS.map(p => ({ ...p, w: 1.16, d: 1.16, h: 18, kind: 'column' as const })),
 ]
-const voidSpace = (floor: 3 | 4): Obstacle => {
-  const r = ATRIUM_OPENINGS[floor]
-  return { x: (r.x1 + r.x2) / 2, z: (r.z1 + r.z2) / 2, w: r.x2 - r.x1, d: r.z2 - r.z1, h: .9, kind: 'void' }
+const voidSpace = (floor: 3 | 4): Obstacle[] => {
+  const polygon = ATRIUM_BOUNDARIES[floor], zs = [...new Set(polygon.map(p => p.z))].sort((a, b) => a - b)
+  return zs.slice(1).map((z2, i) => {
+    const z1 = zs[i], middle = (z1 + z2) / 2
+    const xs = polygon.flatMap((a, j) => {
+      const b = polygon[(j + 1) % polygon.length]
+      return (a.z > middle) !== (b.z > middle) ? [a.x] : []
+    }).sort((a, b) => a - b)
+    return { x: (xs[0] + xs[1]) / 2, z: middle, w: xs[1] - xs[0], d: z2 - z1, h: .9, kind: 'void' }
+  })
 }
-const eastStair: Obstacle = { x: 14, z: 7, w: 7.4, d: 8, h: 5, kind: 'stair' }
-const westStair: Obstacle = { x: -14, z: -7, w: 7.4, d: 8, h: 5, kind: 'stair' }
+export const STAIR_WELL = { x1: 12, x2: 16, z1: -8.5, z2: 8.5 }
+const eastStair: Obstacle = { x: 14, z: 0, w: 4, d: 17, h: 5, kind: 'stair' }
 export const OBSTACLES: Record<Floor, Obstacle[]> = {
   2: [...walls, eastStair, ...PUBLIC_FIXTURES[2],
     ...SOFAS.map(p => ({ ...p, w: 5.7, d: 4.4, h: 1.1, kind: 'sofa' as const, curved: true })),
@@ -83,10 +104,10 @@ export const OBSTACLES: Record<Floor, Obstacle[]> = {
     { x: -18.9, z: 4, w: .37, d: 1.48, h: 2.13, kind: 'desk' },
     { x: -18.83, z: 8, w: .22, d: 2, h: 2, kind: 'desk' },
     { x: 0, z: -20, w: 18, d: 1.5, h: 1.3, kind: 'desk' }],
-  3: [...walls, voidSpace(3), eastStair, westStair, ...PUBLIC_FIXTURES[3],
+  3: [...walls, ...voidSpace(3), eastStair, ...PUBLIC_FIXTURES[3],
     { x: -18.8, z: 10, w: 3, d: 5, h: 1.1, kind: 'sofa' },
     { x: 15, z: 16, w: 5, d: 2, h: .8, kind: 'desk' }],
-  4: [...walls, voidSpace(4), westStair, ...PUBLIC_FIXTURES[4],
+  4: [...walls, ...voidSpace(4), eastStair, ...PUBLIC_FIXTURES[4],
     { x: 18.8, z: 8, w: 3, d: 5, h: 1, kind: 'sofa' },
     { x: 0, z: -18, w: 6, d: 2, h: .85, kind: 'desk' }],
 }

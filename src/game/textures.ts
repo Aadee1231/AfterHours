@@ -25,16 +25,6 @@ export function surfaceTexture(kind: Surface, repeat: [number, number] = [1, 1])
     const sky = ctx.createLinearGradient(0, 0, 0, size)
     sky.addColorStop(0, '#344755'); sky.addColorStop(.57, '#526875'); sky.addColorStop(.7, '#8d8690'); sky.addColorStop(1, '#1e2c35')
     ctx.fillStyle = sky; ctx.fillRect(0, 0, size, size)
-    // Distant, fictional campus massing viewed through the atrium windows.
-    for (let x = -6; x < size; x += 11 + Math.floor(rand() * 30)) {
-      const h = 27 + rand() * 120
-      ctx.fillStyle = rand() > .43 ? '#263741' : '#344751'
-      ctx.fillRect(x, size - h, 18 + rand() * 38, h)
-      if (rand() > .5) {
-        ctx.fillStyle = '#c6a78b'
-        for (let y = size - h + 14; y < size - 12; y += 19) for (let dx = 7; dx < 23; dx += 9) if (rand() > .68) ctx.fillRect(x + dx, y, 2, 3)
-      }
-    }
     ctx.fillStyle = 'rgba(214,205,193,.14)'
     for (let i = 0; i < 90; i++) ctx.fillRect(rand() * size, rand() * size * .68, 1, 1)
   } else {

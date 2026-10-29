@@ -85,7 +85,7 @@ export function objective(s: GameState): [string, string] {
   if (!s.badge && s.floor === 2) return ['Go to the Floor 3 lounge.', 'Take the white east stair. The override badge was checked in after the last ballroom event.']
   if (!s.boardRead) return ['Reveal tonight’s event venue.', 'Floor 3 · Ballroom corridor. Your phone light reveals the Night Owl entry on the event board.']
   if (!s.badge) return ['Recover the security override badge.', 'Floor 3 · Badge loan box beside the event board. Match the saved event venue.']
-  if (!s.authorized && s.floor !== 4) return ['Take the badge to Floor 4.', 'The white west stair leads to the fictional emergency control station.']
+  if (!s.authorized && s.floor !== 4) return ['Take the badge to Floor 4.', 'Continue up the east zigzag stair to the fictional emergency control station.']
   if (!s.authorized) return ['Activate the emergency exit release.', 'Floor 4 · Student organization corridor. Use your badge at the marked control station.']
   if (s.floor !== 2) return ['Return to the Floor 2 entrance.', `MAIN ENTRANCE UNLOCKED. Take the marked stairs down${s.floor === 4 ? ' through Floor 3' : ''}.`]
   return ['Leave through the main entrance.', 'Floor 2 · Main Atrium. The doors are released. Put the phone away and get outside.']
@@ -234,7 +234,7 @@ export const useGame = create<GameState>((set, get) => ({
       if (!s.boardRead || s.run.venues[value] !== s.run.venue) { set({ panelError: 'No badge in that compartment. Match the saved NIGHT OWL venue from the event board.' }); return }
       putPhoneAway(); progress(); runtime.checkpointTime = runtime.time
       set({ badge: true, panel: null, phone: false, panelError: '', checkpoint: 2, graceUntil: Math.max(s.graceUntil, runtime.time + 6) })
-      audio.clue(); audio.announcement('badge'); announce('CHAPTER III · OVERRIDE BADGE RECOVERED. Take the west white stair to the Floor 4 control station. Checkpoint saved.', 14); return
+      audio.clue(); audio.announcement('badge'); announce('CHAPTER III · OVERRIDE BADGE RECOVERED. Continue up the east white stair to the Floor 4 control station. Checkpoint saved.', 14); return
     }
     if (!s.badge) { set({ panelError: 'Override badge missing.' }); return }
     if (value !== s.releaseStep) { set({ panelError: 'Use the terminal in order: scan badge, arm doors, release main.' }); return }

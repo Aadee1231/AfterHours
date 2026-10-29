@@ -4,6 +4,7 @@ import { PointerLockControls } from '@react-three/drei'
 import type { PointerLockControls as LockControls } from 'three-stdlib'
 import * as THREE from 'three'
 import { Library } from './Library'
+import { AtriumReview } from './AtriumReview'
 import { audio } from './audio'
 import { runtime, tick, useGame } from './store'
 import { ANCHORS, SPAWN, floorY, stairPosition, zoneAt, type Floor, type Point } from './world'
@@ -412,6 +413,7 @@ export const Scene = memo(function Scene({ onLocked, onReady }: { onLocked: (val
       <RenderBudget setDpr={setDpr} />
       <Suspense fallback={null}><Library /><Entity /><PoolQuality /></Suspense>
       <Controller onLocked={onLocked} />
+      {import.meta.env.DEV && <AtriumReview />}
     </Canvas>
     {referenceLighting && <div style={{ position: 'fixed', left: 12, bottom: 12, top: 'auto', right: 'auto', width: 'auto', height: 'auto', zIndex: 100, color: '#fff', background: '#222', padding: '6px 10px', font: '12px monospace', pointerEvents: 'none' }}>REFERENCE LIGHTING · DEVELOPMENT REVIEW ONLY</div>}
     {contextLost && <div className="fatal-screen"><h2>The lights went out.</h2><p>Your graphics context was interrupted. Reload to restore it.</p><button onClick={() => location.reload()}>Reload game</button></div>}

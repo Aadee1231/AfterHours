@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { ANCHORS, ATRIUM_OPENINGS, FLOORS, OBSTACLES, SPAWN, STAIRS, STAIR_PATHS, createRun, distance, findPath, isBlocked, lineClear, moveWithCollision, stairPosition, type AnchorId, type Floor, type Point } from '../src/game/world'
+import { ANCHORS, ATRIUM_OPENINGS, FLOORS, OBSTACLES, SPAWN, STAIRS, STAIR_PATHS, createRun, distance, findPath, insideAtrium, isBlocked, lineClear, moveWithCollision, stairPosition, type AnchorId, type Floor, type Point } from '../src/game/world'
 import { act, contextualHint, currentLandmark, hintLevel, messages, objective, runtime, tick, useGame } from '../src/game/store'
 
 vi.mock('../src/game/audio', () => ({ audio: new Proxy({}, { get: () => vi.fn() }) }))
@@ -27,9 +27,12 @@ describe('floor-aware world and seeded puzzles', () => {
     STAIRS.forEach((s, i) => {
       expect(stairPosition(s.from, s.to, 0)).toEqual({ x: s.bottom.x, z: s.bottom.z, y: (s.from - 2) * 5 })
       expect(stairPosition(s.from, s.to, 1)).toEqual({ x: s.top.x, z: s.top.z, y: (s.to - 2) * 5 })
-      expect(STAIR_PATHS[i][1].y).toBe(STAIR_PATHS[i][2].y)
-      expect(Math.abs(STAIR_PATHS[i][1].x - STAIR_PATHS[i][2].x)).toBe(4)
-      expect(Math.sign(STAIR_PATHS[i][1].z - STAIR_PATHS[i][0].z)).not.toBe(Math.sign(STAIR_PATHS[i][3].z - STAIR_PATHS[i][2].z))
+      const path = STAIR_PATHS[i]
+      expect(path[0].y).toBe(path[1].y)
+      expect(path[2].y).toBe(path[3].y)
+      expect(path[2].x).toBe(path[1].x)
+      expect(Math.abs(path[2].z - path[1].z)).toBe(16)
+      expect(Math.sign(path[2].z - path[1].z)).toBe(i === 0 ? 1 : -1)
       for (let n = 0; n <= 100; n++) {
         const p = stairPosition(s.from, s.to, n / 100)
         const reverse = stairPosition(s.to, s.from, 1 - n / 100)
@@ -41,12 +44,23 @@ describe('floor-aware world and seeded puzzles', () => {
     expect(isBlocked(SPAWN.x, SPAWN.z)).toBe(false)
     for (const floor of [3, 4] as Floor[]) expect(isBlocked(0, 0, .3, floor)).toBe(true)
     expect(isBlocked(0, 0, .3, 2)).toBe(false)
-    expect(isBlocked(16, 5, .3, 2)).toBe(true)
-    expect(isBlocked(-16, -4, .3, 3)).toBe(true)
+    expect(isBlocked(14, 5, .3, 2)).toBe(true)
+    expect(isBlocked(14, -4, .3, 3)).toBe(true)
     expect(OBSTACLES[3].some(o => o.kind === 'void')).toBe(true)
     expect(isBlocked(-5, 3, .3, 2)).toBe(false)
     expect(isBlocked(-3.5, 3, .3, 2)).toBe(false)
     expect(isBlocked(-6, 3, .3, 2)).toBe(true)
+  })
+  it('matches stepped atrium collision to the rendered boundaries without sealing balcony alcoves', () => {
+    for (const floor of [3, 4] as const) {
+      for (let x = -9; x <= 11; x += .5) for (let z = -10; z <= 12; z += .5) {
+        const p = { x: x + .13, z: z + .13 }
+        const blockedByVoid = OBSTACLES[floor].filter(o => o.kind === 'void').some(o => Math.abs(p.x - o.x) < o.w / 2 && Math.abs(p.z - o.z) < o.d / 2)
+        expect(blockedByVoid).toBe(insideAtrium(p.x, p.z, floor))
+      }
+    }
+    expect(isBlocked(10, -9, .3, 3)).toBe(false)
+    expect(isBlocked(-8, 10, .3, 4)).toBe(false)
   })
   it('connects every interactable to its floor landing without traversing the void or stair body', () => {
     for (const [id, anchor] of Object.entries(ANCHORS)) {
@@ -144,7 +158,8 @@ describe('fair pursuit, transitions and recovery', () => {
     power(); climb('up2'); badge(); climb('up3'); at('release')
     const deadline = useGame.getState().graceUntil
     expect(deadline - runtime.time).toBe(20)
-    runtime.entity = { x: 15, z: -7 }; runtime.entityFloor = 4
+    runtime.entity = { x: 18, z: -7 }; runtime.entityFloor = 4
+    expect(isBlocked(runtime.entity.x, runtime.entity.z, .38, 4)).toBe(false)
     const initial = { ...runtime.entity }; advance(5)
     expect(distance(initial, runtime.entity)).toBeGreaterThan(1)
     useGame.getState().closePanel(); at('release')
@@ -174,7 +189,8 @@ describe('fair pursuit, transitions and recovery', () => {
   })
   it('cannot pursue through the atrium void or change floor in normal pursuit', () => {
     useGame.setState({ power: true, doorsTried: true, phone: true, floor: 3, graceUntil: 200 })
-    runtime.entityFloor = 3; runtime.entity = { x: 12, z: -8 }; runtime.player = { x: -12, z: 8 }
+    runtime.entityFloor = 3; runtime.entity = { x: 17, z: -8 }; runtime.player = { x: -12, z: 8 }
+    expect(isBlocked(runtime.entity.x, runtime.entity.z, .38, 3)).toBe(false)
     for (let i = 0; i < 800; i++) { advance(.1); expect(isBlocked(runtime.entity.x, runtime.entity.z, .3, 3)).toBe(false) }
     expect(runtime.entity.x).toBeLessThan(-9)
     expect(runtime.entityFloor).toBe(3)
